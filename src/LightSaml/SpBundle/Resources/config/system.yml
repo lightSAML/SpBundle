@@ -1,0 +1,12 @@
+parameters:
+    # light_saml_sp.system.xxx: 123
+
+services:
+    light_saml_sp.system.time_provider:
+        class: LightSaml\Provider\TimeProvider\SystemTimeProvider
+
+    light_saml_sp.system.event_dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+
+    light_saml_sp.system.logger:
+        alias: logger

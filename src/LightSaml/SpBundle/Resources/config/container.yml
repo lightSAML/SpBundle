@@ -1,0 +1,5 @@
+services:
+    light_saml_sp.container.build:
+        class: LightSaml\SpBundle\Bridge\Container\BuildContainer
+        arguments:
+            - @service_container
