@@ -10,19 +10,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SystemContainer implements SystemContainerInterface
+class SystemContainer extends AbstractContainer implements SystemContainerInterface
 {
-    /** @var ContainerInterface */
-    private $container;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     /**
      * @return Request
      */

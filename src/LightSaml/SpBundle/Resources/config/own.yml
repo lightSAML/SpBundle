@@ -2,25 +2,10 @@ parameters:
     light_saml_sp.own.entity_id: ~
 
 services:
-    light_saml_sp.own.credential:
-        class: LightSaml\Credential\X509Credential
-        factory: [@light_saml_sp.own.credential.factory.file, get]
+    light_saml_sp.own.credential_store:
+        class: LightSaml\Store\Credential\StaticCredentialStore
 
-    light_saml_sp.own.credential.factory.file:
-        class: LightSaml\Provider\Credential\X509CredentialFileProvider
-        arguments:
-            - %light_saml_sp.own.entity_id% # entityId
-            - ~ # certificatePath
-            - ~ # privateKeyPath
-            - ~ # privateKeyPassword
-
-    light_saml_sp.own.entity_descriptor:
-        class: LightSaml\Model\Metadata\EntityDescriptor
-#        factory: [LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory, fromEntityDescriptorFile]
-#        arguments:
-#            - ~ # filename
-#        factory: [LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory, fromEntitiesDescriptorFile]
-#        arguments:
-#            - ~ # filename
-#            - ~ # entityID
+    light_saml_sp.own.entity_descriptor_provider:
+        class: LightSaml\Provider\EntityDescriptor\EntityDescriptorProviderInterface
+        factory: [LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory, fromEntityDescriptorFile]
 

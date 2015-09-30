@@ -13,6 +13,7 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
         $containerBuilder = new ContainerBuilder(new ParameterBag());
         $extension = new LightSamlSpExtension();
         $config = $this->getDefaultConfig();
+
         $extension->load($config, $containerBuilder);
     }
 
@@ -27,7 +28,7 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('LightSaml\SpBundle\Bridge\Container\BuildContainer', $containerBuilder->getDefinition('light_saml_sp.container.build')->getClass());
     }
 
-    public function testSetsOwnEntityDescriptorFactoryFromEntityDescriptorFile()
+    public function testSetsOwnEntityDescriptorProviderFactoryFromEntityDescriptorFile()
     {
         $containerBuilder = new ContainerBuilder(new ParameterBag());
         $extension = new LightSamlSpExtension();
@@ -35,35 +36,30 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
 
         $extension->load($config, $containerBuilder);
 
-        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.entity_descriptor'));
-        $definition = $containerBuilder->getDefinition('light_saml_sp.own.entity_descriptor');
+        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.entity_descriptor_provider'));
+        $definition = $containerBuilder->getDefinition('light_saml_sp.own.entity_descriptor_provider');
         $this->assertEquals(
             ['LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory', 'fromEntityDescriptorFile'],
             $definition->getFactory()
         );
         $this->assertCount(1, $definition->getArguments());
-        $this->assertEquals($config['light_saml_sp']['own']['entity_descriptor']['filename'], $definition->getArgument(0));
+        $this->assertEquals($config['light_saml_sp']['own']['entity_descriptor_provider']['filename'], $definition->getArgument(0));
     }
 
-    public function testSetsOwnEntityDescriptorToCustomFactory()
+    public function testSetsOwnEntityDescriptorProviderToCustomAlias()
     {
         $containerBuilder = new ContainerBuilder(new ParameterBag());
         $extension = new LightSamlSpExtension();
         $config = $this->getDefaultConfig();
-        $config['light_saml_sp']['own']['entity_descriptor']['factory'] = $expectedFactory = 'some.factory';
+        $config['light_saml_sp']['own']['entity_descriptor_provider']['id'] = $expectedAlias = 'some.factory';
 
         $extension->load($config, $containerBuilder);
 
-        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.entity_descriptor'));
-        $definition = $containerBuilder->getDefinition('light_saml_sp.own.entity_descriptor');
-        $factory = $definition->getFactory();
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $factory[0]);
-        $this->assertEquals($expectedFactory, (string)$factory[0]);
-        $this->assertEquals('get', $factory[1]);
-        $this->assertCount(0, $definition->getArguments());
+        $this->assertTrue($containerBuilder->hasAlias('light_saml_sp.own.entity_descriptor_provider'));
+        $this->assertEquals($expectedAlias, (string)$containerBuilder->getAlias('light_saml_sp.own.entity_descriptor_provider'));
     }
 
-    public function testSetsOwnCredentialFactoryToFiles()
+    public function testLoadsOwnCredentialStore()
     {
         $containerBuilder = new ContainerBuilder(new ParameterBag());
         $extension = new LightSamlSpExtension();
@@ -71,38 +67,9 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
 
         $extension->load($config, $containerBuilder);
 
-        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.credential'));
-        $definition = $containerBuilder->getDefinition('light_saml_sp.own.credential');
-        $factory = $definition->getFactory();
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $factory[0]);
-        $this->assertEquals('light_saml_sp.own.credential.factory.file', (string)$factory[0]);
-        $this->assertEquals('get', $factory[1]);
-
-        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.credential.factory.file'));
-        $definition = $containerBuilder->getDefinition('light_saml_sp.own.credential.factory.file');
-        $this->assertCount(4, $definition->getArguments());
-        $this->assertEquals('%light_saml_sp.own.entity_id%', $definition->getArgument(0));
-        $this->assertEquals($config['light_saml_sp']['own']['credential']['certificate'], $definition->getArgument(1));
-        $this->assertEquals($config['light_saml_sp']['own']['credential']['private_key'], $definition->getArgument(2));
-        $this->assertEquals($config['light_saml_sp']['own']['credential']['password'], $definition->getArgument(3));
-    }
-
-    public function testSetsOwnCredentialToCustomFactory()
-    {
-        $containerBuilder = new ContainerBuilder(new ParameterBag());
-        $extension = new LightSamlSpExtension();
-        $config = $this->getDefaultConfig();
-        $config['light_saml_sp']['own']['credential']['factory'] = $expectedFactory = 'some.factory';
-
-        $extension->load($config, $containerBuilder);
-
-        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.credential'));
-        $definition = $containerBuilder->getDefinition('light_saml_sp.own.credential');
-        $factory = $definition->getFactory();
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $factory[0]);
-        $this->assertEquals($expectedFactory, (string)$factory[0]);
-        $this->assertEquals('get', $factory[1]);
-        $this->assertCount(0, $definition->getArguments());
+        $this->assertTrue($containerBuilder->hasDefinition('light_saml_sp.own.credential_store'));
+        $definition = $containerBuilder->getDefinition('light_saml_sp.own.credential_store');
+        $this->assertEquals('LightSaml\Store\Credential\StaticCredentialStore', $definition->getClass());
     }
 
     public function testLoadsSystemTimeProvider()
@@ -169,13 +136,8 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'light_saml_sp' => [
                 'own' => [
-                    'entity_descriptor' => [
+                    'entity_descriptor_provider' => [
                         'filename' => 'entity_descriptor.xml',
-                    ],
-                    'credential' => [
-                        'certificate' => 'saml.crt',
-                        'private_key' => 'saml.pem',
-                        'password' => '123',
                     ],
                 ]
             ]

@@ -12,21 +12,10 @@ use LightSaml\Build\Container\StoreContainerInterface;
 use LightSaml\Build\Container\SystemContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class BuildContainer implements BuildContainerInterface
+class BuildContainer extends AbstractContainer implements BuildContainerInterface
 {
-    /** @var  ContainerInterface */
-    private $container;
-
     /** @var SystemContainer */
     private $systemContainer;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * @return SystemContainerInterface

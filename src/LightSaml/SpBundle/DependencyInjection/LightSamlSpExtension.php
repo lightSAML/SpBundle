@@ -38,38 +38,24 @@ class LightSamlSpExtension extends Extension
     private function configureOwn(ContainerBuilder $container, array $config)
     {
         $this->configureOwnEntityDescriptor($container, $config);
-        $this->configureOwnCredential($container, $config);
     }
 
     private function configureOwnEntityDescriptor(ContainerBuilder $container, array $config)
     {
-        $definition = $container->getDefinition('light_saml_sp.own.entity_descriptor');
-        if (isset($config['own']['entity_descriptor']['factory'])) {
-            $definition->setFactory([new Reference($config['own']['entity_descriptor']['factory']), 'get']);
-        } elseif (isset($config['own']['entity_descriptor']['filename'])) {
-            if (isset($config['own']['entity_descriptor']['entity_id'])) {
+        if (isset($config['own']['entity_descriptor_provider']['id'])) {
+            $container->setAlias('light_saml_sp.own.entity_descriptor_provider', $config['own']['entity_descriptor_provider']['id']);
+        } elseif (isset($config['own']['entity_descriptor_provider']['filename'])) {
+            $definition = $container->getDefinition('light_saml_sp.own.entity_descriptor_provider');
+            if (isset($config['own']['entity_descriptor_provider']['entity_id'])) {
                 $definition->setFactory(['LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory', 'fromEntitiesDescriptorFile']);
-                $definition->addArgument($config['own']['entity_descriptor']['filename']);
-                $definition->addArgument($config['own']['entity_descriptor']['entity_id']);
+                $definition->addArgument($config['own']['entity_descriptor_provider']['filename']);
+                $definition->addArgument($config['own']['entity_descriptor_provider']['entity_id']);
             } else {
                 $definition->setFactory(['LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory', 'fromEntityDescriptorFile']);
-                $definition->addArgument($config['own']['entity_descriptor']['filename']);
+                $definition->addArgument($config['own']['entity_descriptor_provider']['filename']);
             }
         } else {
             throw new InvalidConfigurationException('light_saml.own.entity_descriptor must have either factory or filename configuration option');
-        }
-    }
-
-    private function configureOwnCredential(ContainerBuilder $container, array $config)
-    {
-        $definition = $container->getDefinition('light_saml_sp.own.credential');
-        if (isset($config['own']['credential']['factory'])) {
-            $definition->setFactory([new Reference($config['own']['credential']['factory']), 'get']);
-        } else {
-            $factory = $container->getDefinition('light_saml_sp.own.credential.factory.file');
-            $factory->replaceArgument(1, $config['own']['credential']['certificate']);
-            $factory->replaceArgument(2, $config['own']['credential']['private_key']);
-            $factory->replaceArgument(3, $config['own']['credential']['password']);
         }
     }
 
