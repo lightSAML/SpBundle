@@ -1,3 +1,6 @@
+parameters:
+    light_saml_sp.route.discovery: light_saml_sp.discovery
+
 services:
 #    light_saml_sp.something:
 #        class:

@@ -1,0 +1,21 @@
+parameters:
+    light_saml_sp.store.request_session_prefix: main
+    light_saml_sp.store.request_session_sufix: saml_request_state_
+    light_saml_sp.store.sso_state_session_key: samlsso
+
+services:
+    light_saml_sp.store.request:
+        class: LightSaml\Store\Request\RequestStateSessionStore
+        arguments:
+            - @session
+            - %light_saml_sp.store.request_session_prefix%
+            - %light_saml_sp.store.request_session_sufix%
+
+    light_saml_sp.store.id_state:
+        class: LightSaml\Store\Id\NullIdStore
+
+    light_saml_sp.store.sso_state:
+        class: LightSaml\Store\Sso\SsoStateSessionStore
+        arguments:
+            - @session
+            - light_saml_sp.store.sso_state_session_key

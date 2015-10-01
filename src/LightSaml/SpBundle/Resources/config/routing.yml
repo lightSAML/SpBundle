@@ -1,0 +1,15 @@
+light_saml_sp.metadata:
+    path: /metadata.xml
+    defaults: { _controller: LightSamlSpBundle:Default:metadata }
+
+light_saml_sp.discovery:
+    path: /discovery
+    defaults: { _controller: LightSamlSpBundle:Default:discovery }
+
+light_saml_sp.login:
+    path: /login
+    defaults: { _controller: LightSamlSpBundle:Default:login }
+
+light_saml_sp.acs:
+    path: /acs
+    defaults: { _controller: LightSamlSpBundle:Default:acs }

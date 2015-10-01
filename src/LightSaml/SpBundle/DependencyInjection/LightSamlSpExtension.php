@@ -28,11 +28,17 @@ class LightSamlSpExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('container.yml');
-        $loader->load('system.yml');
         $loader->load('own.yml');
+        $loader->load('system.yml');
+        $loader->load('party.yml');
+        $loader->load('store.yml');
+        $loader->load('credential.yml');
+        $loader->load('service.yml');
+        $loader->load('profile.yml');
 
         $this->configureOwn($container, $config);
         $this->configureSystem($container, $config);
+        $this->configureStore($container, $config);
     }
 
     private function configureOwn(ContainerBuilder $container, array $config)
@@ -68,6 +74,19 @@ class LightSamlSpExtension extends Extension
 
         if (isset($config['system']['logger'])) {
             $container->setAlias('light_saml_sp.system.logger', $config['system']['logger']);
+        }
+    }
+
+    private function configureStore(ContainerBuilder $container, array $config)
+    {
+        if (isset($config['store']['request'])) {
+            $container->setAlias('light_saml_sp.store.request', $config['store']['request']);
+        }
+        if (isset($config['store']['id_state'])) {
+            $container->setAlias('light_saml_sp.store.id_state', $config['store']['id_state']);
+        }
+        if (isset($config['store']['sso_state'])) {
+            $container->setAlias('light_saml_sp.store.sso_state', $config['store']['sso_state']);
         }
     }
 }

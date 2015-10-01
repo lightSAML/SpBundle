@@ -10,23 +10,20 @@ use LightSaml\Build\Container\ProviderContainerInterface;
 use LightSaml\Build\Container\ServiceContainerInterface;
 use LightSaml\Build\Container\StoreContainerInterface;
 use LightSaml\Build\Container\SystemContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use LightSaml\Error\LightSamlBuildException;
 
 class BuildContainer extends AbstractContainer implements BuildContainerInterface
 {
-    /** @var SystemContainer */
-    private $systemContainer;
+    /** @var AbstractContainer[] */
+    private $containers = [];
+
 
     /**
      * @return SystemContainerInterface
      */
     public function getSystemContainer()
     {
-        if (null == $this->systemContainer) {
-            $this->systemContainer = new SystemContainer($this->container);
-        }
-
-        return $this->systemContainer;
+        return $this->getContainer(SystemContainer::class);
     }
 
     /**
@@ -34,7 +31,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getPartyContainer()
     {
-        // TODO: Implement getPartyContainer() method.
+        return $this->getContainer(PartyContainer::class);
     }
 
     /**
@@ -42,7 +39,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getStoreContainer()
     {
-        // TODO: Implement getStoreContainer() method.
+        return $this->getContainer(StoreContainer::class);
     }
 
     /**
@@ -50,7 +47,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getProviderContainer()
     {
-        // TODO: Implement getProviderContainer() method.
+        throw new LightSamlBuildException('Not implemented in SP');
     }
 
     /**
@@ -58,7 +55,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getCredentialContainer()
     {
-        // TODO: Implement getCredentialContainer() method.
+        return $this->getContainer(CredentialContainer::class);
     }
 
     /**
@@ -66,7 +63,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getServiceContainer()
     {
-        // TODO: Implement getServiceContainer() method.
+        return $this->getContainer(ServiceContainer::class);
     }
 
     /**
@@ -74,6 +71,20 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
      */
     public function getOwnContainer()
     {
-        // TODO: Implement getOwnContainer() method.
+        return $this->getContainer(OwnContainer::class);
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return AbstractContainer
+     */
+    private function getContainer($class)
+    {
+        if (false === isset($this->containers[$class])) {
+            $this->containers = new $class($this->container);
+        }
+
+        return $this->containers[$class];
     }
 }
