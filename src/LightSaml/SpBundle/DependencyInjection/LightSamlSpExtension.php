@@ -5,6 +5,7 @@ namespace LightSaml\SpBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -43,7 +44,10 @@ class LightSamlSpExtension extends Extension
 
     private function configureOwn(ContainerBuilder $container, array $config)
     {
+        $container->setParameter('light_saml_sp.own.entity_id', $config['own']['entity_id']);
+
         $this->configureOwnEntityDescriptor($container, $config);
+        $this->configureOwnCredentials($container, $config);
     }
 
     private function configureOwnEntityDescriptor(ContainerBuilder $container, array $config)
@@ -60,8 +64,27 @@ class LightSamlSpExtension extends Extension
                 $definition->setFactory(['LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory', 'fromEntityDescriptorFile']);
                 $definition->addArgument($config['own']['entity_descriptor_provider']['filename']);
             }
-        } else {
-            throw new InvalidConfigurationException('light_saml.own.entity_descriptor must have either factory or filename configuration option');
+        }
+    }
+
+    private function configureOwnCredentials(ContainerBuilder $container, array $config)
+    {
+        if (false == isset($config['own']['credentials'])) {
+            return;
+        }
+
+        foreach ($config['own']['credentials'] as $id=>$data) {
+            $definition = new Definition(
+                'LightSaml\Store\Credential\X509FileCredentialStore',
+                [
+                    $config['own']['entity_id'],
+                    $data['certificate'],
+                    $data['key'],
+                    $data['password']
+                ]
+            );
+            $definition->addTag('lightsaml.own_credential_store');
+            $container->setDefinition('light_saml_sp.own.credential_store.'.$id, $definition);
         }
     }
 

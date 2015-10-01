@@ -82,7 +82,7 @@ class BuildContainer extends AbstractContainer implements BuildContainerInterfac
     private function getContainer($class)
     {
         if (false === isset($this->containers[$class])) {
-            $this->containers = new $class($this->container);
+            $this->containers[$class] = new $class($this->container);
         }
 
         return $this->containers[$class];

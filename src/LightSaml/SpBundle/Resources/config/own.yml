@@ -3,9 +3,12 @@ parameters:
 
 services:
     light_saml_sp.own.credential_store:
-        class: LightSaml\Store\Credential\StaticCredentialStore
+        class: LightSaml\Store\Credential\CompositeCredentialStore
 
     light_saml_sp.own.entity_descriptor_provider:
-        class: LightSaml\Provider\EntityDescriptor\EntityDescriptorProviderInterface
-        factory: [LightSaml\Provider\EntityDescriptor\FileEntityDescriptorProviderFactory, fromEntityDescriptorFile]
-
+        class: LightSaml\Builder\EntityDescriptor\SimpleEntityDescriptorBuilder
+        arguments:
+            - %light_saml_sp.own.entity_id%
+            - "@=service('router').generate('light_saml_sp.acs', [], true)"
+            - ~
+            - "@=service('light_saml_sp.own.credential_store').getByEntityId(parameter('light_saml_sp.own.entity_id'))[0].getCertificate()"
