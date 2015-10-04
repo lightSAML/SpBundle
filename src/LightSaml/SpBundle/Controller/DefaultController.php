@@ -9,7 +9,7 @@ class DefaultController extends Controller
 {
     public function metadataAction()
     {
-        $profile = $this->get('ligth_saml_sp.profile.metadata');
+        $profile = $this->get('ligthsaml.profile.metadata');
         $context = $profile->buildContext();
         $action = $profile->buildAction();
 
@@ -20,10 +20,10 @@ class DefaultController extends Controller
 
     public function discoveryAction()
     {
-        $parties = $this->get('light_saml_sp.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
+        $parties = $this->get('lightsaml.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
         if (count($parties) == 1) {
-            return $this->redirectToRoute('light_saml_sp.login', ['idp'=>$parties[0]->getEntityID()]);
+            return $this->redirectToRoute('lightsaml_sp.login', ['idp'=>$parties[0]->getEntityID()]);
         }
 
         return $this->render('@LightSamlSp/discovery.html.twig', [
@@ -35,10 +35,10 @@ class DefaultController extends Controller
     {
         $idpEntityId = $request->get('idp');
         if (null == $idpEntityId) {
-            return $this->redirectToRoute($this->container->getParameter('light_saml_sp.route.discovery'));
+            return $this->redirectToRoute($this->container->getParameter('lightsaml_sp.route.discovery'));
         }
 
-        $profile = $this->get('ligth_saml_sp.profile.login_factory')->get($idpEntityId);
+        $profile = $this->get('ligthsaml.profile.login_factory')->get($idpEntityId);
         $context = $profile->buildContext();
         $action = $profile->buildAction();
 
@@ -49,7 +49,7 @@ class DefaultController extends Controller
 
     public function sessionsAction()
     {
-        $ssoState = $this->get('light_saml_sp.container.build')->getStoreContainer()->getSsoStateStore()->get();
+        $ssoState = $this->get('lightsaml.container.build')->getStoreContainer()->getSsoStateStore()->get();
 
         return $this->render('@LightSamlSp/sessions.html.twig', [
             'sessions' => $ssoState->getSsoSessions(),

@@ -2,15 +2,31 @@
 
 namespace LightSaml\SpBundle\Security\Firewall;
 
-use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\Builder\Profile\ProfileBuilderInterface;
+use LightSaml\Model\Protocol\Response;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Firewall\AbstractAuthenticationListener;
 
 class LightSamlSpListener extends AbstractAuthenticationListener
 {
+    /** @var ProfileBuilderInterface */
+    private $profile;
+
+    /**
+     * @param ProfileBuilderInterface $profile
+     *
+     * @return LightSamlSpListener
+     */
+    public function setProfile(ProfileBuilderInterface $profile)
+    {
+        $this->profile = $profile;
+
+        return $this;
+    }
+
     /**
      * Performs authentication.
      *
@@ -22,6 +38,25 @@ class LightSamlSpListener extends AbstractAuthenticationListener
      */
     protected function attemptAuthentication(Request $request)
     {
-        return new SamlSpToken([], $this->providerKey);
+        $samlResponse = $this->receiveSamlResponse();
+
+        $token = new SamlSpResponseToken($samlResponse, $this->providerKey);
+
+        $token = $this->authenticationManager->authenticate($token);
+
+        return $token;
+    }
+
+    /**
+     * @return \LightSaml\Model\Protocol\Response
+     */
+    private function receiveSamlResponse()
+    {
+        $context = $this->profile->buildContext();
+        $action = $this->profile->buildAction();
+
+        $action->execute($context);
+
+        return $context->getInboundMessage();
     }
 }

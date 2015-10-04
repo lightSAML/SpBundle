@@ -3,6 +3,7 @@
 namespace LightSaml\SpBundle\Security\Authentication\Provider;
 
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -35,7 +36,18 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
             return null;
         }
 
-        return new SamlSpToken(['ROLE_USER'], $this->providerKey);
+        /** @var SamlSpResponseToken $token */
+        $result = new SamlSpToken(['ROLE_USER'], $this->providerKey);
+
+        if ($token->getResponse()->getFirstAssertion() &&
+            $token->getResponse()->getFirstAssertion()->getSubject() &&
+            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID() &&
+            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue()
+        ) {
+            $result->setUser($token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue());
+        }
+
+        return $result;
     }
 
     /**
@@ -47,6 +59,6 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof SamlSpToken;
+        return $token instanceof SamlSpResponseToken;
     }
 }

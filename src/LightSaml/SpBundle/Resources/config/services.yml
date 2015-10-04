@@ -1,5 +1,6 @@
 parameters:
-    light_saml_sp.route.discovery: light_saml_sp.discovery
+    lightsaml_sp.route.discovery: lightsaml_sp.discovery
+    lightsaml.route.login_check: lightsaml_sp.login_check
 
 services:
 #    light_saml_sp.something:

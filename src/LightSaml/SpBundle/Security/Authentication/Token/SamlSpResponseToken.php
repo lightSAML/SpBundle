@@ -4,7 +4,7 @@ namespace LightSaml\SpBundle\Security\Authentication\Token;
 
 use LightSaml\Model\Protocol\Response;
 
-class SamlSpUnauthorizedToken extends SamlSpToken
+class SamlSpResponseToken extends SamlSpToken
 {
     /** @var Response */
     private $response;
@@ -14,6 +14,8 @@ class SamlSpUnauthorizedToken extends SamlSpToken
         parent::__construct([], $providerKey);
 
         $this->response = $response;
+
+        $this->setAuthenticated(false);
     }
 
     /**
