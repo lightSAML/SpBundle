@@ -13,7 +13,7 @@ class SamlSpToken extends AbstractToken
      * @param array  $roles
      * @param string $providerKey
      */
-    public function __construct(array $roles = array(), $providerKey)
+    public function __construct(array $roles, $providerKey)
     {
         parent::__construct($roles);
 
