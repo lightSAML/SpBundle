@@ -1,0 +1,11 @@
+services:
+    security.authentication.listener.light_saml_sp:
+        class: LightSaml\SpBundle\Security\Firewall\LightSamlSpListener
+        parent: security.authentication.listener.abstract
+        abstract: true
+
+    security.authentication.provider.light_saml_sp:
+        class: LightSaml\SpBundle\Security\Authentication\Provider\LightsSamlSpAuthenticationProvider
+        arguments:
+            - ~ # provider key
+        abstract: true

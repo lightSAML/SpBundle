@@ -20,14 +20,14 @@ class DefaultController extends Controller
 
     public function discoveryAction()
     {
-        $idps = $this->get('light_saml_sp.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
+        $parties = $this->get('light_saml_sp.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
-        if (count($idps) == 0) {
-            return $this->redirectToRoute('light_saml_sp.login', ['idp'=>$idps[0]->getEntityID()]);
+        if (count($parties) == 1) {
+            return $this->redirectToRoute('light_saml_sp.login', ['idp'=>$parties[0]->getEntityID()]);
         }
 
         return $this->render('@LightSamlSp/discovery.html.twig', [
-            'idps' => $idps,
+            'parties' => $parties,
         ]);
     }
 
@@ -47,14 +47,12 @@ class DefaultController extends Controller
         return $context->getHttpResponseContext()->getResponse();
     }
 
-    public function acsAction()
+    public function sessionsAction()
     {
-        $profile = $this->get('ligth_saml_sp.profile.acs');
-        $context = $profile->buildContext();
-        $action = $profile->buildAction();
+        $ssoState = $this->get('light_saml_sp.container.build')->getStoreContainer()->getSsoStateStore()->get();
 
-        $action->execute($context);
-
-
+        return $this->render('@LightSamlSp/sessions.html.twig', [
+            'sessions' => $ssoState->getSsoSessions(),
+        ]);
     }
 }

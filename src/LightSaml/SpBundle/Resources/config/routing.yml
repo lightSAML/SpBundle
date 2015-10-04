@@ -10,6 +10,9 @@ light_saml_sp.login:
     path: /login
     defaults: { _controller: LightSamlSpBundle:Default:login }
 
-light_saml_sp.acs:
-    path: /acs
-    defaults: { _controller: LightSamlSpBundle:Default:acs }
+light_saml_sp.login_check:
+    path: /login_check
+
+light_saml_sp.sessions:
+    path: /sessions
+    defaults: { _controller: LightSamlSpBundle:Default:sessions }

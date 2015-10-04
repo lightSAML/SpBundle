@@ -1,9 +1,0 @@
-services:
-    light_saml_sp.party.sp_entity_descriptor_store:
-        class: LightSaml\Store\EntityDescriptor\CompositeEntityDescriptorStore
-
-    light_saml_sp.party.idp_entity_descriptor_store:
-        class: LightSaml\Store\EntityDescriptor\CompositeEntityDescriptorStore
-
-    light_saml_sp.party.trust_options_store:
-        class: LightSaml\Store\TrustOptions\CompositeTrustOptionsStore
