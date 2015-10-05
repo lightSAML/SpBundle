@@ -5,9 +5,12 @@ services:
         abstract: true
         calls:
             - [setProfile, [@ligthsaml.profile.acs]]
-            
+
     security.authentication.provider.light_saml_sp:
         class: LightSaml\SpBundle\Security\Authentication\Provider\LightsSamlSpAuthenticationProvider
         arguments:
             - ~ # provider key
+            - ~ # user provider
+            - ~ # create user if not exist
+            - @security.user_checker
         abstract: true

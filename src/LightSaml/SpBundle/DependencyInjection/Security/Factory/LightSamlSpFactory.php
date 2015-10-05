@@ -3,12 +3,23 @@
 namespace LightSaml\SpBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 
 class LightSamlSpFactory extends AbstractFactory
 {
+    public function addConfiguration(NodeDefinition $node)
+    {
+        parent::addConfiguration($node);
+        $node
+            ->children()
+                ->booleanNode('create_user_if_not_exists')->defaultFalse()->end()
+            ->end()
+        ->end();
+    }
+
     /**
      * Subclasses must return the id of a service which implements the
      * AuthenticationProviderInterface.
@@ -25,7 +36,10 @@ class LightSamlSpFactory extends AbstractFactory
         $providerId = 'security.authentication.provider.light_saml_sp.'.$id;
         $provider = $container
             ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.light_saml_sp'))
-            ->replaceArgument(0, $id);
+            ->replaceArgument(0, $id)
+            ->replaceArgument(1, new Reference($userProviderId))
+            ->replaceArgument(2, $config['create_user_if_not_exists'])
+        ;
 
         return $providerId;
     }
