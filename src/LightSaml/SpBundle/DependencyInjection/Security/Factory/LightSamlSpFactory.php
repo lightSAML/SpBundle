@@ -15,7 +15,10 @@ class LightSamlSpFactory extends AbstractFactory
         parent::addConfiguration($node);
         $node
             ->children()
-                ->booleanNode('create_user_if_not_exists')->defaultFalse()->end()
+                ->booleanNode('force')->defaultFalse()->end()
+                ->scalarNode('username_mapper')->defaultValue('light_saml_sp.username_mapper.simple')->end()
+                ->scalarNode('user_creator')->defaultNull()->end()
+                ->scalarNode('attribute_mapper')->defaultNull()->end()
             ->end()
         ->end();
     }
@@ -37,9 +40,20 @@ class LightSamlSpFactory extends AbstractFactory
         $provider = $container
             ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.light_saml_sp'))
             ->replaceArgument(0, $id)
-            ->replaceArgument(1, new Reference($userProviderId))
-            ->replaceArgument(2, $config['create_user_if_not_exists'])
+            ->replaceArgument(2, $config['force'])
         ;
+        if (isset($config['provider'])) {
+            $provider->replaceArgument(1, new Reference($userProviderId));
+        }
+        if ($config['username_mapper']) {
+            $provider->replaceArgument(4, new Reference($config['username_mapper']));
+        }
+        if ($config['user_creator']) {
+            $provider->replaceArgument(5, new Reference($config['user_creator']));
+        }
+        if ($config['attribute_mapper']) {
+            $provider->replaceArgument(6, new Reference($config['attribute_mapper']));
+        }
 
         return $providerId;
     }

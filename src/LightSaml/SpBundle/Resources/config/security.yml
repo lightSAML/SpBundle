@@ -11,6 +11,9 @@ services:
         arguments:
             - ~ # provider key
             - ~ # user provider
-            - ~ # create user if not exist
+            - ~ # force
             - @security.user_checker
+            - @light_saml_sp.username_mapper.simple # username mapper
+            - ~ # user creator
+            - ~ # attribute mapper
         abstract: true

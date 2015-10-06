@@ -27,5 +27,13 @@ class LightSamlSpExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('security.yml');
         $loader->load('services.yml');
+
+        $this->configureSimpleUsernameMapper($config, $container);
+    }
+
+    private function configureSimpleUsernameMapper(array $config, ContainerBuilder $container)
+    {
+        $definition = $container->getDefinition('light_saml_sp.username_mapper.simple');
+        $definition->replaceArgument(0, $config['username_mapper']);
     }
 }

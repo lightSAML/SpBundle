@@ -2,14 +2,17 @@
 
 namespace LightSaml\SpBundle\Security\Authentication\Provider;
 
+use LightSaml\ClaimTypes;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
-use LightSaml\SpBundle\Security\User\UserManagerInterface;
+use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
+use LightSaml\SpBundle\Security\User\UserCreatorInterface;
+use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\UserChecker;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -22,27 +25,45 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     private $userProvider;
 
     /** @var bool */
-    private $createIfNotExists;
+    private $force;
 
-    /** @var UserChecker */
+    /** @var UserCheckerInterface|null */
     private $userChecker;
 
+    /** @var UsernameMapperInterface|null */
+    private $usernameMapper;
+
+    /** @var UserCreatorInterface */
+    private $userCreator;
+
+    /** @var AttributeMapperInterface */
+    private $attributeMapper;
+
     /**
-     * @param                       $providerKey
-     * @param UserProviderInterface $userProvider
-     * @param bool                  $createIfNotExists
-     * @param UserChecker           $userChecker
+     * @param string                        $providerKey
+     * @param UserProviderInterface|null    $userProvider
+     * @param bool                          $force
+     * @param UserCheckerInterface|null     $userChecker
+     * @param UsernameMapperInterface|null  $usernameMapper
+     * @param UserCreatorInterface|null     $userCreator
+     * @param AttributeMapperInterface|null $attributeMapper
      */
     public function __construct(
         $providerKey,
-        UserProviderInterface $userProvider,
-        $createIfNotExists = false,
-        UserChecker $userChecker = null
+        UserProviderInterface $userProvider = null,
+        $force = false,
+        UserCheckerInterface $userChecker = null,
+        UsernameMapperInterface $usernameMapper = null,
+        UserCreatorInterface $userCreator = null,
+        AttributeMapperInterface $attributeMapper = null
     ) {
         $this->providerKey = $providerKey;
         $this->userProvider = $userProvider;
-        $this->createIfNotExists = $createIfNotExists;
+        $this->force = $force;
         $this->userChecker = $userChecker;
+        $this->usernameMapper = $usernameMapper;
+        $this->userCreator = $userCreator;
+        $this->attributeMapper = $attributeMapper;
     }
 
     /**
@@ -61,15 +82,37 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         }
 
         /** @var SamlSpResponseToken $token */
-        $result = new SamlSpToken(['ROLE_USER'], $this->providerKey);
 
-        if ($token->getResponse()->getFirstAssertion() &&
-            $token->getResponse()->getFirstAssertion()->getSubject() &&
-            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID() &&
-            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue()
-        ) {
-            $result->setUser($token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue());
+        $user = null;
+        try {
+            $user = $this->loadUser($token);
+        } catch (UsernameNotFoundException $ex) {
+            $user = $this->createUser($token);
         }
+
+        if (null == $user && $this->force) {
+            $user = $this->createDefaultUser($token);
+        }
+
+        if (null == $user) {
+            $ex = new AuthenticationException('Unable to resolve user');
+            $ex->setToken($token);
+
+            throw $ex;
+        }
+
+        if ($this->userChecker && $user instanceof UserInterface) {
+            $this->userChecker->checkPostAuth($user);
+        }
+
+        $attributes = $this->getAttributes($token);
+
+        $result = new SamlSpToken(
+            $user instanceof UserInterface ? $user->getRoles() : [],
+            $this->providerKey,
+            $attributes,
+            $user
+        );
 
         return $result;
     }
@@ -86,49 +129,105 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         return $token instanceof SamlSpResponseToken;
     }
 
-    private function getUser(SamlSpResponseToken $token)
-    {
-        if ($this->userProvider instanceof UserManagerInterface) {
-            return $this->getUserFromManager($token);
-        }
-
-        return $this->getUserFromProvider($token);
-    }
-
     /**
      * @param SamlSpResponseToken $token
      *
-     * @return UserInterface
+     * @return UserInterface|null
+     *
+     * @throws UsernameNotFoundException
      */
-    private function getUserFromManager(SamlSpResponseToken $token)
+    private function loadUser(SamlSpResponseToken $token)
     {
-        $user = null;
-        /** @var UserManagerInterface $userManager */
-        $userManager = $this->userProvider;
-        try {
-            $user = $userManager->loadUserByResponse($token->getResponse());
-        } catch (UsernameNotFoundException $ex) {
-            if (false == $this->createIfNotExists) {
-                throw $ex;
-            }
-            $user = $userManager->createUserByResponse($token->getResponse());
+        if (null == $this->usernameMapper || null == $this->userProvider) {
+            return null;
         }
 
-        if (false == $user instanceof UserInterface) {
-            throw new \RuntimeException('User provider did not return an implementation of user interface.');
+        $username = $this->usernameMapper->getUsername($token->getResponse());
+
+        $user = $this->userProvider->loadUserByUsername($username);
+
+        if ($user && false == $user instanceof UserInterface) {
+            throw new \RuntimeException('User provider must return instance of UserInterface or null');
         }
 
         return $user;
     }
 
     /**
-     * @param TokenInterface $token
+     * @param SamlSpResponseToken $token
      *
-     * @return UserInterface
+     * @return null|UserInterface
      */
-    private function getUserFromProvider(TokenInterface $token)
+    private function createUser(SamlSpResponseToken $token)
     {
-        // use mapper to map response to the username
-        throw new UsernameNotFoundException('Not implemented');
+        if (null == $this->userCreator) {
+            return null;
+        }
+
+        $user = $this->userCreator->createUser($token->getResponse());
+
+        if ($user && false == $user instanceof UserInterface) {
+            throw new \RuntimeException('User creator must return instance of UserInterface or null');
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param SamlSpResponseToken $token
+     *
+     * @return null|string
+     */
+    private function createDefaultUser(SamlSpResponseToken $token)
+    {
+        if ($token->getResponse()->getFirstAssertion() &&
+            $token->getResponse()->getFirstAssertion()->getSubject() &&
+            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID() &&
+            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue()
+        ) {
+            return $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue();
+        }
+
+        if ($token->getResponse()->getFirstAssertion() &&
+            $attributeStatement = $token->getResponse()->getFirstAssertion()->getFirstAttributeStatement()
+        ) {
+            $names = [
+                ClaimTypes::COMMON_NAME,
+                ClaimTypes::EMAIL_ADDRESS,
+                ClaimTypes::WINDOWS_ACCOUNT_NAME,
+                ClaimTypes::ADFS_1_EMAIL,
+                ClaimTypes::UPN,
+                ClaimTypes::ADFS_1_UPN,
+            ];
+
+            foreach ($names as $name) {
+                $attribute = $attributeStatement->getFirstAttributeByName($name);
+                if ($attribute->getFirstAttributeValue()) {
+                    return $attribute->getFirstAttributeValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param SamlSpResponseToken $token
+     *
+     * @return array
+     */
+    private function getAttributes(SamlSpResponseToken $token)
+    {
+        if (null == $this->attributeMapper) {
+            return [];
+        }
+
+        $attributes = $this->attributeMapper->getAttributes($token);
+
+        if (false === is_array($attributes)) {
+            throw new \RuntimeException('Attribute mapper must return array');
+        }
+
+        return $attributes;
     }
 }

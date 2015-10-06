@@ -11,7 +11,7 @@ class SamlSpResponseToken extends SamlSpToken
 
     public function __construct(Response $response, $providerKey)
     {
-        parent::__construct([], $providerKey);
+        parent::__construct([], $providerKey, [], null);
 
         $this->response = $response;
 
