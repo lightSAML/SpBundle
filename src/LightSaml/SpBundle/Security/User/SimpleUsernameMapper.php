@@ -4,6 +4,7 @@ namespace LightSaml\SpBundle\Security\User;
 
 use LightSaml\Model\Assertion\Assertion;
 use LightSaml\Model\Protocol\Response;
+use LightSaml\SamlConstants;
 
 class SimpleUsernameMapper implements UsernameMapperInterface
 {
@@ -48,7 +49,8 @@ class SimpleUsernameMapper implements UsernameMapperInterface
             if (self::NAME_ID == $attributeName) {
                 if ($assertion->getSubject() &&
                     $assertion->getSubject()->getNameID() &&
-                    $assertion->getSubject()->getNameID()->getValue()
+                    $assertion->getSubject()->getNameID()->getValue() &&
+                    $assertion->getSubject()->getNameID()->getFormat() != SamlConstants::NAME_ID_FORMAT_TRANSIENT
                 ) {
                     return $assertion->getSubject()->getNameID()->getValue();
                 }

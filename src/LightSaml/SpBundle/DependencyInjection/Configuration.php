@@ -23,10 +23,13 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('username_mapper')
                     ->defaultValue([
-                        ClaimTypes::COMMON_NAME,
                         ClaimTypes::EMAIL_ADDRESS,
                         ClaimTypes::ADFS_1_EMAIL,
+                        ClaimTypes::COMMON_NAME,
                         ClaimTypes::WINDOWS_ACCOUNT_NAME,
+                        'urn:oid:0.9.2342.19200300.100.1.3',
+                        'uid',
+                        'urn:oid:1.3.6.1.4.1.5923.1.1.1.6',
                         SimpleUsernameMapper::NAME_ID,
                     ])
                     ->prototype('scalar')->end()
