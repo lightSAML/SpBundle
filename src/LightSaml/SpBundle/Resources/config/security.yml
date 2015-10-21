@@ -1,19 +1,19 @@
 services:
-    security.authentication.listener.light_saml_sp:
+    security.authentication.listener.lightsaml_sp:
         class: LightSaml\SpBundle\Security\Firewall\LightSamlSpListener
         parent: security.authentication.listener.abstract
         abstract: true
         calls:
             - [setProfile, [@ligthsaml.profile.acs]]
 
-    security.authentication.provider.light_saml_sp:
+    security.authentication.provider.lightsaml_sp:
         class: LightSaml\SpBundle\Security\Authentication\Provider\LightsSamlSpAuthenticationProvider
         arguments:
             - ~ # provider key
             - ~ # user provider
             - ~ # force
             - @security.user_checker
-            - @light_saml_sp.username_mapper.simple # username mapper
+            - @lightsaml_sp.username_mapper.simple # username mapper
             - ~ # user creator
             - ~ # attribute mapper
         abstract: true

@@ -3,7 +3,7 @@ parameters:
     lightsaml.route.login_check: lightsaml_sp.login_check
 
 services:
-    light_saml_sp.username_mapper.simple:
+    lightsaml_sp.username_mapper.simple:
         class: LightSaml\SpBundle\Security\User\SimpleUsernameMapper
         arguments:
             - []

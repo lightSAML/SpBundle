@@ -16,7 +16,7 @@ class LightSamlSpFactory extends AbstractFactory
         $node
             ->children()
                 ->booleanNode('force')->defaultFalse()->end()
-                ->scalarNode('username_mapper')->defaultValue('light_saml_sp.username_mapper.simple')->end()
+                ->scalarNode('username_mapper')->defaultValue('lightsaml_sp.username_mapper.simple')->end()
                 ->scalarNode('user_creator')->defaultNull()->end()
                 ->scalarNode('attribute_mapper')->defaultNull()->end()
             ->end()
@@ -36,9 +36,9 @@ class LightSamlSpFactory extends AbstractFactory
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        $providerId = 'security.authentication.provider.light_saml_sp.'.$id;
+        $providerId = 'security.authentication.provider.lightsaml_sp.'.$id;
         $provider = $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.light_saml_sp'))
+            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.lightsaml_sp'))
             ->replaceArgument(0, $id)
             ->replaceArgument(2, $config['force'])
         ;
@@ -75,7 +75,7 @@ class LightSamlSpFactory extends AbstractFactory
      */
     protected function getListenerId()
     {
-        return 'security.authentication.listener.light_saml_sp';
+        return 'security.authentication.listener.lightsaml_sp';
     }
 
     /**
