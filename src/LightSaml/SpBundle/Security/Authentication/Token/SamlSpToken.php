@@ -1,9 +1,17 @@
 <?php
 
+/*
+ * This file is part of the LightSAML SP-Bundle package.
+ *
+ * (c) Milos Tomic <tmilos@lightsaml.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace LightSaml\SpBundle\Security\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SamlSpToken extends AbstractToken
 {
