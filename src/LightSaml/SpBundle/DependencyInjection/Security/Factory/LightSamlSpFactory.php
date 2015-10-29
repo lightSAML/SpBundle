@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the LightSAML SP-Bundle package.
+ *
+ * (c) Milos Tomic <tmilos@lightsaml.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace LightSaml\SpBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
@@ -28,8 +37,8 @@ class LightSamlSpFactory extends AbstractFactory
      * AuthenticationProviderInterface.
      *
      * @param ContainerBuilder $container
-     * @param string           $id The unique id of the firewall
-     * @param array            $config The options array for this listener
+     * @param string           $id             The unique id of the firewall
+     * @param array            $config         The options array for this listener
      * @param string           $userProviderId The id of the user provider
      *
      * @return string never null, the id of the authentication provider

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the LightSAML SP-Bundle package.
+ *
+ * (c) Milos Tomic <tmilos@lightsaml.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace LightSaml\SpBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,7 +32,7 @@ class DefaultController extends Controller
         $parties = $this->get('lightsaml.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
         if (count($parties) == 1) {
-            return $this->redirectToRoute('lightsaml_sp.login', ['idp'=>$parties[0]->getEntityID()]);
+            return $this->redirectToRoute('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]);
         }
 
         return $this->render('@LightSamlSp/discovery.html.twig', [
