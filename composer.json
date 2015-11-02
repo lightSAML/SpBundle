@@ -12,6 +12,7 @@
     "require": {
         "php": ">=5.5.1",
         "symfony/framework-bundle": "^2.3",
+        "symfony/security-bundle": "^2.3",
         "symfony/expression-language": "^2.4",
         "lightsaml/lightsaml": "dev-master",
         "lightsaml/symfony-bridge": "dev-master"
