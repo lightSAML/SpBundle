@@ -18,14 +18,8 @@
         "lightsaml/symfony-bridge": "dev-master"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5"
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "bash contrib/setup.sh"
-        ],
-        "post-update-cmd": [
-        ]
+        "phpunit/phpunit": "~4.5",
+        "bernardosilva/git-hooks-php": "~0.0.4"
     },
     "config": {
         "bin-dir": "bin"
