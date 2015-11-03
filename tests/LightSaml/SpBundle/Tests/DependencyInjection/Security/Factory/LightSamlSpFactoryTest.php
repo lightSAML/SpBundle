@@ -86,10 +86,76 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function test_returns_entry_point()
     {
-        // TODO reconsider entry point
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list(, , $entryPointId) = $factory->create($containerBuilder, 'main', $config, 'user.provider.id', $defaultEntryPoint = null);
+        $this->assertStringStartsWith('security.authentication.form_entry_point', $entryPointId);
+        $this->assertStringEndsWith('.main', $entryPointId);
     }
 
     // TODO test values injected on provider in function createAuthProvider()
+
+    public function test_creates_auth_provider_service()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, 'user.provider.id', $defaultEntryPoint = null);
+        $this->assertTrue($containerBuilder->hasDefinition($providerId));
+    }
+
+    public function test_injects_user_provider_to_auth_provider()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, $userProvider = 'user.provider.id', $defaultEntryPoint = null);
+        $definition = $containerBuilder->getDefinition($providerId);
+        /** @var \Symfony\Component\DependencyInjection\Reference $reference */
+        $reference = $definition->getArgument(1);
+        $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Reference::class, $reference);
+        $this->assertEquals($userProvider, (string) $reference);
+    }
+
+    public function test_injects_username_mapper_to_auth_provider()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, $userProvider = 'user.provider.id', $defaultEntryPoint = null);
+        $definition = $containerBuilder->getDefinition($providerId);
+        /** @var \Symfony\Component\DependencyInjection\Reference $reference */
+        $reference = $definition->getArgument(4);
+        $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Reference::class, $reference);
+        $this->assertEquals($config['username_mapper'], (string) $reference);
+    }
+
+    public function test_injects_user_creator_to_auth_provider()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, $userProvider = 'user.provider.id', $defaultEntryPoint = null);
+        $definition = $containerBuilder->getDefinition($providerId);
+        /** @var \Symfony\Component\DependencyInjection\Reference $reference */
+        $reference = $definition->getArgument(5);
+        $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Reference::class, $reference);
+        $this->assertEquals($config['user_creator'], (string) $reference);
+    }
+
+    public function test_injects_attribute_mapper_to_auth_provider()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, $userProvider = 'user.provider.id', $defaultEntryPoint = null);
+        $definition = $containerBuilder->getDefinition($providerId);
+        /** @var \Symfony\Component\DependencyInjection\Reference $reference */
+        $reference = $definition->getArgument(6);
+        $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Reference::class, $reference);
+        $this->assertEquals($config['attribute_mapper'], (string) $reference);
+    }
 
     /**
      * @return array
@@ -99,8 +165,8 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
         return [
             'force' => false,
             'username_mapper' => 'lightsaml_sp.username_mapper.simple',
-            'user_creator' => null,
-            'attribute_mapper' => null,
+            'user_creator' => 'some.user.creator',
+            'attribute_mapper' => 'some.attribute.mapper',
             'remember_me' => true,
             'provider' => 'some.provider',
             'success_handler' => 'success_handler',
