@@ -5,6 +5,8 @@ php:
     - 5.6
 
 before_script:
+    - composer self-update
+    - composer --version
     - wget http://get.sensiolabs.org/php-cs-fixer.phar -O php-cs-fixer.phar
     - COMPOSER_ROOT_VERSION=dev-master composer install
 
