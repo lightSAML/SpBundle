@@ -12,6 +12,7 @@
 namespace LightSaml\SpBundle\Security\Authentication\Provider;
 
 use LightSaml\ClaimTypes;
+use LightSaml\SamlConstants;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
@@ -87,7 +88,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     public function authenticate(TokenInterface $token)
     {
         if (false === $this->supports($token)) {
-            return null;
+            throw new \LogicException('Unsupported token');
         }
 
         /* @var SamlSpResponseToken $token */
@@ -148,15 +149,15 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     private function loadUser(SamlSpResponseToken $token)
     {
         if (null == $this->usernameMapper || null == $this->userProvider) {
-            return null;
+            throw new UsernameNotFoundException();
         }
 
         $username = $this->usernameMapper->getUsername($token->getResponse());
 
         $user = $this->userProvider->loadUserByUsername($username);
 
-        if ($user && false == $user instanceof UserInterface) {
-            throw new \RuntimeException('User provider must return instance of UserInterface or null');
+        if (false == $user instanceof UserInterface) {
+            throw new \LogicException('User provider must return instance of UserInterface');
         }
 
         return $user;
@@ -170,13 +171,13 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     private function createUser(SamlSpResponseToken $token)
     {
         if (null == $this->userCreator) {
-            return null;
+            return;
         }
 
         $user = $this->userCreator->createUser($token->getResponse());
 
         if ($user && false == $user instanceof UserInterface) {
-            throw new \RuntimeException('User creator must return instance of UserInterface or null');
+            throw new \LogicException('User creator must return instance of UserInterface or null');
         }
 
         return $user;
@@ -192,6 +193,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         if ($token->getResponse()->getFirstAssertion() &&
             $token->getResponse()->getFirstAssertion()->getSubject() &&
             $token->getResponse()->getFirstAssertion()->getSubject()->getNameID() &&
+            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getFormat() != SamlConstants::NAME_ID_FORMAT_TRANSIENT &&
             $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue()
         ) {
             return $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue();
@@ -211,13 +213,13 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
 
             foreach ($names as $name) {
                 $attribute = $attributeStatement->getFirstAttributeByName($name);
-                if ($attribute->getFirstAttributeValue()) {
+                if ($attribute && $attribute->getFirstAttributeValue()) {
                     return $attribute->getFirstAttributeValue();
                 }
             }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -234,7 +236,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         $attributes = $this->attributeMapper->getAttributes($token);
 
         if (false === is_array($attributes)) {
-            throw new \RuntimeException('Attribute mapper must return array');
+            throw new \LogicException('Attribute mapper must return array');
         }
 
         return $attributes;
