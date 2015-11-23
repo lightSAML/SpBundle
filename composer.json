@@ -3,6 +3,7 @@
     "license": "MIT",
     "type": "symfony-bundle",
     "description": "Light SAML2 SP Symfony Bundle",
+    "homepage": "http://www.lightsaml.com/SP-Bundle/",
     "autoload": {
         "psr-0": {
             "LightSaml\\SpBundle\\Tests\\": "tests/",
@@ -11,9 +12,7 @@
     },
     "require": {
         "php": ">=5.5.1",
-        "symfony/symfony": "^2.3",
-        "symfony/expression-language": "^2.4",
-        "lightsaml/lightsaml": "dev-master",
+        "symfony/symfony": "~2.3",
         "lightsaml/symfony-bridge": "dev-master"
     },
     "require-dev": {
