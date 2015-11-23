@@ -8,9 +8,9 @@
 
 <h1>SAML Sessions</h1>
 {% for session in sessions %}
-    <ul>
-        <li>IDP: {{ session.idpEntityId }}</li>
-        <li>SP: {{ session.spEntityId }}</li>
+    <ul data-session>
+        <li data-idp="{{ session.idpEntityId }}">IDP: {{ session.idpEntityId }}</li>
+        <li data-sp="{{ session.spEntityId }}">SP: {{ session.spEntityId }}</li>
         <li>NameID: {{ session.nameId }}</li>
         <li>NameIDFormat: {{ session.nameIdFormat }}</li>
         <li>SessionIndex: {{ session.sessionIndex }}</li>

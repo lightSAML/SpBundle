@@ -171,7 +171,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     private function createUser(SamlSpResponseToken $token)
     {
         if (null == $this->userCreator) {
-            return;
+            return null;
         }
 
         $user = $this->userCreator->createUser($token->getResponse());
@@ -219,7 +219,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
             }
         }
 
-        return;
+        return null;
     }
 
     /**

@@ -11,14 +11,14 @@
     },
     "require": {
         "php": ">=5.5.1",
-        "symfony/framework-bundle": "^2.3",
-        "symfony/security-bundle": "^2.3",
+        "symfony/symfony": "^2.3",
         "symfony/expression-language": "^2.4",
         "lightsaml/lightsaml": "dev-master",
         "lightsaml/symfony-bridge": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.5",
+        "symfony/monolog-bundle": "^2.3",
         "satooshi/php-coveralls": "~0.6"
     },
     "scripts": {

@@ -1,0 +1,43 @@
+framework:
+    secret:          secret
+    test: ~
+    router:          { resource: "%kernel.root_dir%/routing.yml" }
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    templating:      { engines: ['twig'] }
+    session:
+        handler_id:  ~
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: error
+            handler:      nested
+        nested:
+            type:  stream
+            path:  %kernel.logs_dir%/%kernel.environment%.log
+            level: debug
+
+
+light_saml_symfony_bridge:
+    own:
+        entity_id: https://localhost/lightSAML/SPBundle
+        credentials:
+            -
+                certificate: %kernel.root_dir%/../../../../../../vendor/lightsaml/lightsaml/web/sp/saml.crt
+                key:         %kernel.root_dir%/../../../../../../vendor/lightsaml/lightsaml/web/sp/saml.key
+                password:    ~
+    party:
+        idp:
+            files:
+                - %kernel.root_dir%/../../../../../../vendor/lightsaml/lightsaml/web/sp/openidp.feide.no.xml
+                - %kernel.root_dir%/../../../../../../vendor/lightsaml/lightsaml/web/sp/localhost-lightsaml-lightsaml-idp.xml
+                - %kernel.root_dir%/../../../../../../vendor/lightsaml/lightsaml/web/sp/testshib-providers.xml
+    store:
+        id_state: id_store
+
+services:
+    id_store:
+        class: LightSaml\Store\Id\IdArrayStore
