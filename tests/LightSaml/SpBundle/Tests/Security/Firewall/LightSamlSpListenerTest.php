@@ -155,11 +155,15 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface|\Symfony\Component\Security\Core\SecurityContextInterface
      */
     private function getTokenStorageMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface::class);
+        if (class_exists('\Symfony\Bundle\SecurityBundle\Command\UserPasswordEncoderCommand')) {
+            return $this->getMock(\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface::class);
+        } else { // for symfony/security-bundle <= 2.6
+            return $this->getMock(\Symfony\Component\Security\Core\SecurityContextInterface::class);
+        }
     }
 
     /**

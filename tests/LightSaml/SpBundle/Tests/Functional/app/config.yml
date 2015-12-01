@@ -1,10 +1,8 @@
 framework:
     secret:          secret
-    test: ~
+    test:            ~
     router:          { resource: "%kernel.root_dir%/routing.yml" }
-    form:            ~
     csrf_protection: ~
-    validation:      { enable_annotations: true }
     templating:      { engines: ['twig'] }
     session:
         handler_id:  ~
@@ -20,6 +18,14 @@ monolog:
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
 
+security:
+    providers:
+        dummy:
+            memory: ~
+    firewalls:
+        dummy:
+            provider: dummy
+            anonymous: ~
 
 light_saml_symfony_bridge:
     own:
