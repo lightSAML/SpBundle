@@ -11,8 +11,6 @@ cache:
         - $HOME/.composer/cache/files
 
 matrix:
-    allow_failures:
-        - php: hhvm
     include:
         - php: 5.5
           env: COMPOSER_FLAGS="--prefer-lowest"
