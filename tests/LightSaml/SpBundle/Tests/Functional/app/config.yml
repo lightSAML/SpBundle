@@ -5,7 +5,7 @@ framework:
     csrf_protection: ~
     templating:      { engines: ['twig'] }
     session:
-        handler_id:  ~
+        handler_id:  session.handler.native_file
 
 monolog:
     handlers:
