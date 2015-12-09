@@ -4,6 +4,14 @@
     "type": "symfony-bundle",
     "description": "Light SAML2 SP Symfony Bundle",
     "homepage": "http://www.lightsaml.com/SP-Bundle/",
+    "authors": [
+        {
+            "name": "Milos Tomic",
+            "email": "tmilos@gmail.com",
+            "homepage": "http://github.com/tmilos",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-0": {
             "LightSaml\\SpBundle\\Tests\\": "tests/",
@@ -14,7 +22,7 @@
         "php": ">=5.5.1",
         "symfony/framework-bundle": "~2.3|~3.0",
         "symfony/security-bundle": "~2.3|~3.0",
-        "lightsaml/symfony-bridge": "dev-master"
+        "lightsaml/symfony-bridge": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.6",
@@ -26,5 +34,5 @@
         "bin-dir": "bin"
     },
     "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
