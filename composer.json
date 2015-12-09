@@ -12,20 +12,15 @@
     },
     "require": {
         "php": ">=5.5.1",
-        "symfony/symfony": "~2.3",
+        "symfony/framework-bundle": "~2.3",
+        "symfony/security-bundle": "~2.3",
         "lightsaml/symfony-bridge": "dev-master"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5",
-        "symfony/monolog-bundle": "^2.3",
+        "phpunit/phpunit": "~4.6",
+        "symfony/symfony": "~2.3",
+        "symfony/monolog-bundle": "~2.3",
         "satooshi/php-coveralls": "~0.6"
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "bash contrib/setup.sh"
-        ],
-        "post-update-cmd": [
-        ]
     },
     "config": {
         "bin-dir": "bin"
