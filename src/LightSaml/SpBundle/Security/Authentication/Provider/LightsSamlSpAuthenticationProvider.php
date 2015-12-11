@@ -100,11 +100,11 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
             $user = $this->createUser($token);
         }
 
-        if (null == $user && $this->force) {
+        if (null === $user && $this->force) {
             $user = $this->createDefaultUser($token);
         }
 
-        if (null == $user) {
+        if (null === $user) {
             $ex = new AuthenticationException('Unable to resolve user');
             $ex->setToken($token);
 
@@ -142,13 +142,13 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     /**
      * @param SamlSpResponseToken $token
      *
-     * @return UserInterface|null
+     * @return UserInterface
      *
      * @throws UsernameNotFoundException
      */
     private function loadUser(SamlSpResponseToken $token)
     {
-        if (null == $this->usernameMapper || null == $this->userProvider) {
+        if (null === $this->usernameMapper || null === $this->userProvider) {
             throw new UsernameNotFoundException();
         }
 
@@ -156,7 +156,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
 
         $user = $this->userProvider->loadUserByUsername($username);
 
-        if (false == $user instanceof UserInterface) {
+        if (false === $user instanceof UserInterface) {
             throw new \LogicException('User provider must return instance of UserInterface');
         }
 
@@ -170,13 +170,13 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     private function createUser(SamlSpResponseToken $token)
     {
-        if (null == $this->userCreator) {
-            return null;
+        if (null === $this->userCreator) {
+            return;
         }
 
         $user = $this->userCreator->createUser($token->getResponse());
 
-        if ($user && false == $user instanceof UserInterface) {
+        if ($user && false === $user instanceof UserInterface) {
             throw new \LogicException('User creator must return instance of UserInterface or null');
         }
 
@@ -219,7 +219,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
             }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -229,7 +229,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     private function getAttributes(SamlSpResponseToken $token)
     {
-        if (null == $this->attributeMapper) {
+        if (null === $this->attributeMapper) {
             return [];
         }
 

@@ -43,7 +43,7 @@ class DefaultController extends Controller
     public function loginAction(Request $request)
     {
         $idpEntityId = $request->get('idp');
-        if (null == $idpEntityId) {
+        if (null === $idpEntityId) {
             return $this->redirectToRoute($this->container->getParameter('lightsaml_sp.route.discovery'));
         }
 
