@@ -13,7 +13,7 @@ namespace LightSaml\SpBundle\Security\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
-class SamlSpToken extends AbstractToken
+class SamlSpToken extends AbstractToken implements SamlSpTokenInterface
 {
     /** @var string */
     private $providerKey;

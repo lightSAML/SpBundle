@@ -7,3 +7,6 @@ services:
         class: LightSaml\SpBundle\Security\User\SimpleUsernameMapper
         arguments:
             - []
+
+    lightsaml_sp.token_factory:
+        class: LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactory

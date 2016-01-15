@@ -15,6 +15,7 @@ use LightSaml\ClaimTypes;
 use LightSaml\SamlConstants;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactoryInterface;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
@@ -49,6 +50,9 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     /** @var AttributeMapperInterface */
     private $attributeMapper;
 
+    /** @var SamlSpTokenFactoryInterface */
+    private $tokenFactory;
+
     /**
      * @param string                        $providerKey
      * @param UserProviderInterface|null    $userProvider
@@ -57,6 +61,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      * @param UsernameMapperInterface|null  $usernameMapper
      * @param UserCreatorInterface|null     $userCreator
      * @param AttributeMapperInterface|null $attributeMapper
+     * @param SamlSpTokenFactoryInterface   $tokenFactory
      */
     public function __construct(
         $providerKey,
@@ -65,7 +70,8 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         UserCheckerInterface $userChecker = null,
         UsernameMapperInterface $usernameMapper = null,
         UserCreatorInterface $userCreator = null,
-        AttributeMapperInterface $attributeMapper = null
+        AttributeMapperInterface $attributeMapper = null,
+        SamlSpTokenFactoryInterface $tokenFactory
     ) {
         $this->providerKey = $providerKey;
         $this->userProvider = $userProvider;
@@ -74,6 +80,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         $this->usernameMapper = $usernameMapper;
         $this->userCreator = $userCreator;
         $this->attributeMapper = $attributeMapper;
+        $this->tokenFactory = $tokenFactory;
     }
 
     /**
@@ -117,7 +124,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
 
         $attributes = $this->getAttributes($token);
 
-        $result = new SamlSpToken(
+        $result = $this->tokenFactory->create(
             $user instanceof UserInterface ? $user->getRoles() : [],
             $this->providerKey,
             $attributes,
