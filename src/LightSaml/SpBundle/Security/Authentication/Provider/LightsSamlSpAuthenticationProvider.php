@@ -13,8 +13,9 @@ namespace LightSaml\SpBundle\Security\Authentication\Provider;
 
 use LightSaml\ClaimTypes;
 use LightSaml\SamlConstants;
-use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactoryInterface;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
@@ -49,14 +50,18 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     /** @var AttributeMapperInterface */
     private $attributeMapper;
 
+    /** @var SamlSpTokenFactoryInterface */
+    private $tokenFactory;
+
     /**
-     * @param string                        $providerKey
-     * @param UserProviderInterface|null    $userProvider
-     * @param bool                          $force
-     * @param UserCheckerInterface|null     $userChecker
-     * @param UsernameMapperInterface|null  $usernameMapper
-     * @param UserCreatorInterface|null     $userCreator
-     * @param AttributeMapperInterface|null $attributeMapper
+     * @param string                           $providerKey
+     * @param UserProviderInterface|null       $userProvider
+     * @param bool                             $force
+     * @param UserCheckerInterface|null        $userChecker
+     * @param UsernameMapperInterface|null     $usernameMapper
+     * @param UserCreatorInterface|null        $userCreator
+     * @param AttributeMapperInterface|null    $attributeMapper
+     * @param SamlSpTokenFactoryInterface|null $tokenFactory
      */
     public function __construct(
         $providerKey,
@@ -65,7 +70,8 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         UserCheckerInterface $userChecker = null,
         UsernameMapperInterface $usernameMapper = null,
         UserCreatorInterface $userCreator = null,
-        AttributeMapperInterface $attributeMapper = null
+        AttributeMapperInterface $attributeMapper = null,
+        SamlSpTokenFactoryInterface $tokenFactory = null
     ) {
         $this->providerKey = $providerKey;
         $this->userProvider = $userProvider;
@@ -74,6 +80,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         $this->usernameMapper = $usernameMapper;
         $this->userCreator = $userCreator;
         $this->attributeMapper = $attributeMapper;
+        $this->tokenFactory = $tokenFactory;
     }
 
     /**
@@ -117,12 +124,21 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
 
         $attributes = $this->getAttributes($token);
 
-        $result = new SamlSpToken(
-            $user instanceof UserInterface ? $user->getRoles() : [],
-            $this->providerKey,
-            $attributes,
-            $user
-        );
+        if ($this->tokenFactory) {
+            $result = $this->tokenFactory->create(
+                $this->providerKey,
+                $attributes,
+                $user,
+                $token
+            );
+        } else {
+            $result = new SamlSpToken(
+                $user instanceof UserInterface ? $user->getRoles() : [],
+                $this->providerKey,
+                $attributes,
+                $user
+            );
+        }
 
         return $result;
     }
@@ -171,7 +187,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     private function createUser(SamlSpResponseToken $token)
     {
         if (null === $this->userCreator) {
-            return;
+            return null;
         }
 
         $user = $this->userCreator->createUser($token->getResponse());
@@ -219,7 +235,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
             }
         }
 
-        return;
+        return null;
     }
 
     /**

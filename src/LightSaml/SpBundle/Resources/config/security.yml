@@ -16,4 +16,5 @@ services:
             - "@lightsaml_sp.username_mapper.simple" # username mapper
             - ~ # user creator
             - ~ # attribute mapper
+            - ~ # token factory
         abstract: true
