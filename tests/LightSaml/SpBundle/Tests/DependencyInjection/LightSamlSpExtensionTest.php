@@ -22,6 +22,7 @@ class LightSamlSpExtensionTest extends \PHPUnit_Framework_TestCase
             ['security.authentication.listener.lightsaml_sp'],
             ['security.authentication.provider.lightsaml_sp'],
             ['lightsaml_sp.username_mapper.simple'],
+            ['lightsaml_sp.token_factory'],
         ];
     }
     /**

@@ -13,6 +13,7 @@ use LightSaml\SamlConstants;
 use LightSaml\SpBundle\Security\Authentication\Provider\LightsSamlSpAuthenticationProvider;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
+use LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactoryInterface;
 use LightSaml\SpBundle\Security\User\AttributeMapperInterface;
 use LightSaml\SpBundle\Security\User\UserCreatorInterface;
 use LightSaml\SpBundle\Security\User\UsernameMapperInterface;
@@ -290,6 +291,37 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $provider->authenticate(new SamlSpResponseToken(new Response(), $providerKey));
     }
 
+    public function test_calls_token_factory_if_provided()
+    {
+        $provider = new LightsSamlSpAuthenticationProvider(
+            $providerKey = 'main',
+            $userProviderMock = $this->getUserProviderMock(),
+            false,
+            null,
+            $usernameMapperMock = $this->getUsernameMapperMock(),
+            null,
+            null,
+            $tokenFactoryMock = $this->getTokenFactoryMock()
+        );
+
+        $responseToken = new SamlSpResponseToken(new Response(), $providerKey);
+
+        $user = $this->getUserMock();
+        $user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn($expectedRoles = ['foo', 'bar']);
+
+        $userProviderMock->expects($this->once())
+            ->method('loadUserByUsername')
+            ->willReturn($user);
+
+        $tokenFactoryMock->expects($this->once())
+            ->method('create')
+            ->with($providerKey, $this->isType('array'), $user, $responseToken);
+
+        $provider->authenticate($responseToken);
+    }
+
     /**
      * @expectedException \LogicException
      * @expectedExceptionMessage Unsupported token
@@ -433,5 +465,13 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     private function getAttributeMapperMock()
     {
         return $this->getMock(AttributeMapperInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|SamlSpTokenFactoryInterface
+     */
+    private function getTokenFactoryMock()
+    {
+        return $this->getMock(SamlSpTokenFactoryInterface::class);
     }
 }

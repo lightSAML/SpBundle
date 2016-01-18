@@ -35,6 +35,7 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
             ['username_mapper', ScalarNode::class, 'lightsaml_sp.username_mapper.simple'],
             ['user_creator', ScalarNode::class, null],
             ['attribute_mapper', ScalarNode::class, null],
+            ['token_factory', ScalarNode::class, 'lightsaml_sp.token_factory'],
         ];
     }
 
@@ -46,11 +47,11 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new LightSamlSpFactory();
         $treeBuilder = new TreeBuilder();
         $factory->addConfiguration($treeBuilder->root('name'));
-        $childeren = $treeBuilder->buildTree()->getChildren();
-        $this->assertArrayHasKey($configurationName, $childeren);
-        $this->assertInstanceOf($type, $childeren['force']);
+        $children = $treeBuilder->buildTree()->getChildren();
+        $this->assertArrayHasKey($configurationName, $children);
+        $this->assertInstanceOf($type, $children['force']);
 
-        $this->assertEquals($defaultValue, $childeren[$configurationName]->getDefaultValue());
+        $this->assertEquals($defaultValue, $children[$configurationName]->getDefaultValue());
     }
 
     public function test_create_returns_array_with_provider_listener_and_entry_point()
@@ -157,6 +158,19 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($config['attribute_mapper'], (string) $reference);
     }
 
+    public function test_injects_token_factory_to_auth_provider()
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag());
+        $config = $this->getDefaultConfig();
+        $factory = new LightSamlSpFactory();
+        list($providerId) = $factory->create($containerBuilder, 'main', $config, $userProvider = 'user.provider.id', $defaultEntryPoint = null);
+        $definition = $containerBuilder->getDefinition($providerId);
+        /** @var \Symfony\Component\DependencyInjection\Reference $reference */
+        $reference = $definition->getArgument(7);
+        $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Reference::class, $reference);
+        $this->assertEquals($config['token_factory'], (string) $reference);
+    }
+
     /**
      * @return array
      */
@@ -165,6 +179,7 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
         return [
             'force' => false,
             'username_mapper' => 'lightsaml_sp.username_mapper.simple',
+            'token_factory' => 'lightsaml_sp.token_factory',
             'user_creator' => 'some.user.creator',
             'attribute_mapper' => 'some.attribute.mapper',
             'remember_me' => true,

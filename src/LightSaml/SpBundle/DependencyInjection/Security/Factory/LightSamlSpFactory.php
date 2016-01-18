@@ -55,17 +55,18 @@ class LightSamlSpFactory extends AbstractFactory
         if (isset($config['provider'])) {
             $provider->replaceArgument(1, new Reference($userProviderId));
         }
-        if ($config['username_mapper']) {
+        if (isset($config['username_mapper'])) {
             $provider->replaceArgument(4, new Reference($config['username_mapper']));
         }
-        if ($config['user_creator']) {
+        if (isset($config['user_creator'])) {
             $provider->replaceArgument(5, new Reference($config['user_creator']));
         }
-        if ($config['attribute_mapper']) {
+        if (isset($config['attribute_mapper'])) {
             $provider->replaceArgument(6, new Reference($config['attribute_mapper']));
         }
-
-        $provider->replaceArgument(7, new Reference($config['token_factory']));
+        if (isset($config['token_factory'])) {
+            $provider->replaceArgument(7, new Reference($config['token_factory']));
+        }
 
         return $providerId;
     }
