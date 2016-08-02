@@ -80,7 +80,7 @@ class FunctionalTest extends WebTestCase
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp1')->setSpEntityId('sp1'));
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp2')->setSpEntityId('sp2'));
 
-        $ssoStateStoreMock = $this->getMock(SsoStateStoreInterface::class);
+        $ssoStateStoreMock = $this->getMockBuilder(SsoStateStoreInterface::class)->getMock();
         $ssoStateStoreMock->method('get')
             ->willReturn($ssoState);
 

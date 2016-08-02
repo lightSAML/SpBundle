@@ -109,7 +109,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getActionMock()
     {
-        return $this->getMock(\LightSaml\Action\ActionInterface::class);
+        return $this->getMockBuilder(\LightSaml\Action\ActionInterface::class)->getMock();
     }
 
     /**
@@ -117,7 +117,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getProfileBuilderMock()
     {
-        return $this->getMock(\LightSaml\Builder\Profile\ProfileBuilderInterface::class);
+        return $this->getMockBuilder(\LightSaml\Builder\Profile\ProfileBuilderInterface::class)->getMock();
     }
 
     /**
@@ -125,7 +125,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestMock()
     {
-        return $this->getMock(\Symfony\Component\HttpFoundation\Request::class);
+        return $this->getMockBuilder(\Symfony\Component\HttpFoundation\Request::class)->getMock();
     }
 
     /**
@@ -133,7 +133,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getResponseMock()
     {
-        return $this->getMock(\Symfony\Component\HttpFoundation\Response::class);
+        return $this->getMockBuilder(\Symfony\Component\HttpFoundation\Response::class)->getMock();
     }
 
     /**
@@ -141,7 +141,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getSessionMock()
     {
-        return $this->getMock(\Symfony\Component\HttpFoundation\Session\SessionInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\HttpFoundation\Session\SessionInterface::class)->getMock();
     }
 
     /**
@@ -160,9 +160,9 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
     private function getTokenStorageMock()
     {
         if (class_exists('\Symfony\Bundle\SecurityBundle\Command\UserPasswordEncoderCommand')) {
-            return $this->getMock(\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface::class);
+            return $this->getMockBuilder(\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface::class)->getMock();
         } else { // for symfony/security-bundle <= 2.6
-            return $this->getMock(\Symfony\Component\Security\Core\SecurityContextInterface::class);
+            return $this->getMockBuilder(\Symfony\Component\Security\Core\SecurityContextInterface::class)->getMock();
         }
     }
 
@@ -171,7 +171,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getAuthenticationManagerMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface::class)->getMock();
     }
 
     /**
@@ -179,7 +179,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getSessionAuthenticationStrategyMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterface::class)->getMock();
     }
 
     /**
@@ -187,7 +187,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getHttpUtilsMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Http\HttpUtils::class);
+        return $this->getMockBuilder(\Symfony\Component\Security\Http\HttpUtils::class)->getMock();
     }
 
     /**
@@ -195,7 +195,7 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getAuthenticationSuccessHandlerMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface::class)->getMock();
     }
 
     /**
@@ -203,6 +203,6 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getAuthenticationFailureHandlerMock()
     {
-        return $this->getMock(\Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface::class)->getMock();
     }
 }
