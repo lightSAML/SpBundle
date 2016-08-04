@@ -10,7 +10,7 @@
 <p><small>Choose one</small></p>
 {% for idp in parties %}
     {% if idp.allIdpSsoDescriptors %}
-        <p><a data-idp="{{ idp.entityID }}" href="{{ path(redirect_route, {idp: idp.entityID}) }}">{{ idp.entityID }}</a></p>
+        <p><a data-idp="{{ idp.entityID }}" href="{{ path('lightsaml_sp.login', {idp: idp.entityID}) }}">{{ idp.entityID }}</a></p>
     {% endif %}
 {% else %}
     <p>There is no IDP configured</p>
