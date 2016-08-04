@@ -1,4 +1,5 @@
 <?php
+
 namespace LightSaml\SpBundle\Model\Protocol;
 
 use LightSaml\Context\Profile\MessageContext;
@@ -15,8 +16,7 @@ use LightSaml\State\Sso\SsoSessionState;
 use LightSaml\Store\EntityDescriptor\EntityDescriptorStoreInterface;
 
 /**
- * Class LogoutMessageFactory
- * @package LightSaml\SpBundle\Model\Protocol
+ * Class LogoutMessageFactory.
  */
 class LogoutMessageContextFactory
 {
@@ -27,7 +27,8 @@ class LogoutMessageContextFactory
 
     /**
      * LogoutMessageFactory constructor.
-     * @param string $spEntityId
+     *
+     * @param string                         $spEntityId
      * @param EntityDescriptorStoreInterface $entityDescriptorStore
      */
     public function __construct($spEntityId, EntityDescriptorStoreInterface $entityDescriptorStore)
@@ -38,6 +39,7 @@ class LogoutMessageContextFactory
 
     /**
      * @param SsoSessionState $sessionState
+     *
      * @return MessageContext
      */
     public function request(SsoSessionState $sessionState)
@@ -56,6 +58,7 @@ class LogoutMessageContextFactory
 
     /**
      * @param LogoutRequest $ipRequest
+     *
      * @return MessageContext
      */
     public function response(LogoutRequest $ipRequest)
@@ -110,6 +113,7 @@ class LogoutMessageContextFactory
 
     /**
      * @param SamlMessage $samlMessage
+     *
      * @return MessageContext
      */
     private function surroundWithContext(SamlMessage $samlMessage)

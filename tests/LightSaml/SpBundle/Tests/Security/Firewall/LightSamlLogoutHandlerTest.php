@@ -1,5 +1,7 @@
 <?php
+
 namespace LightSaml\SpBundle\Tests\Security\Firewall;
+
 use LightSaml\Binding\AbstractBinding;
 use LightSaml\Binding\BindingFactoryInterface;
 use LightSaml\Context\Profile\MessageContext;
@@ -20,8 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class LightSamlLogoutHandlerTest
- * @package LightSaml\SpBundle\Tests\Security\Firewall
+ * Class LightSamlLogoutHandlerTest.
  */
 class LightSamlLogoutHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -297,7 +298,7 @@ class LightSamlLogoutHandlerTest extends \PHPUnit_Framework_TestCase
                     return [$this->getMockBuilder(SsoSessionState::class)->getMock()];
                 }
 
-                return null;
+                return;
             });
 
         return $mock;

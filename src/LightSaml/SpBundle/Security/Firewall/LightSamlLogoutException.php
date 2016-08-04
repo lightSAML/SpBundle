@@ -1,12 +1,12 @@
 <?php
+
 namespace LightSaml\SpBundle\Security\Firewall;
 
 use LightSaml\Error\LightSamlException;
 use LightSaml\Model\Protocol\LogoutResponse;
 
 /**
- * Class LightSamlLogoutException
- * @package src\LightSaml\SpBundle\Security\Firewall
+ * Class LightSamlLogoutException.
  */
 class LightSamlLogoutException extends LightSamlException
 {
@@ -14,6 +14,7 @@ class LightSamlLogoutException extends LightSamlException
 
     /**
      * LightSamlLogoutException constructor.
+     *
      * @param LogoutResponse $logoutResponse
      */
     public function __construct(LogoutResponse $logoutResponse)

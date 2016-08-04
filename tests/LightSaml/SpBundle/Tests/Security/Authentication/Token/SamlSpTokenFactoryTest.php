@@ -21,7 +21,7 @@ class SamlSpTokenFactoryTest extends \PHPUnit_Framework_TestCase
 
         $token = $factory->create(
             $providerKey = 'main',
-            $attributes = ['a'=>1],
+            $attributes = ['a' => 1],
             $user = new User('joe', '', ['ROLE_USER']),
             $responseToken = new SamlSpResponseToken(new Response(), $providerKey)
         );

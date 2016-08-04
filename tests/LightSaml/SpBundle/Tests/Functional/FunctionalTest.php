@@ -71,7 +71,7 @@ class FunctionalTest extends WebTestCase
         $this->assertEquals('AuthnRequest', $root->getName());
         $this->assertEquals('https://localhost/lightsaml/lightSAML-IDP/web/idp/login.php', $root['Destination']);
         $this->assertEquals(1, $root->children('saml', true)->Issuer->count());
-        $this->assertEquals(self::OWN_ENTITY_ID, (string)$root->children('saml', true)->Issuer);
+        $this->assertEquals(self::OWN_ENTITY_ID, (string) $root->children('saml', true)->Issuer);
     }
 
     public function test_sessions()
@@ -96,7 +96,6 @@ class FunctionalTest extends WebTestCase
         $this->assertEquals('sp1', $crawlerSessions->first()->filter('li[data-sp]')->attr('data-sp'));
         $this->assertEquals('idp2', $crawlerSessions->last()->filter('li[data-idp]')->attr('data-idp'));
         $this->assertEquals('sp2', $crawlerSessions->last()->filter('li[data-sp]')->attr('data-sp'));
-
     }
 
     public function test_logout()

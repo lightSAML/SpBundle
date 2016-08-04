@@ -1,4 +1,5 @@
 <?php
+
 namespace LightSaml\SpBundle\Security\Firewall;
 
 use LightSaml\Binding\BindingFactoryInterface;
@@ -17,8 +18,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 
 /**
- * Class LightSamlLogoutHandler
- * @package LightSaml\SpBundle\Security\Firewall
+ * Class LightSamlLogoutHandler.
  */
 class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 {
@@ -35,9 +35,10 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * LightSamlLogoutHandler constructor.
-     * @param BindingFactoryInterface $bindingFactory
-     * @param SsoStateStoreInterface $ssoStateStore
-     * @param RouterInterface $router
+     *
+     * @param BindingFactoryInterface     $bindingFactory
+     * @param SsoStateStoreInterface      $ssoStateStore
+     * @param RouterInterface             $router
      * @param LogoutMessageContextFactory $logoutMessageContextFactory
      */
     public function __construct(
@@ -53,7 +54,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onLogoutSuccess(Request $request)
     {
@@ -95,6 +96,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * @param LogoutRequest $samlRequest
+     *
      * @return Response
      */
     private function sendLogoutResponseToIP(LogoutRequest $samlRequest)
@@ -108,6 +110,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * @param LogoutResponse $logoutResponse
+     *
      * @return RedirectResponse
      */
     private function handleLogoutResponseFromIP(LogoutResponse $logoutResponse)
@@ -126,6 +129,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * @param LogoutRequest $logoutRequest
+     *
      * @return Response
      */
     private function handleLogoutRequestFromIP(LogoutRequest $logoutRequest)
@@ -138,7 +142,8 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * @param Request $request
-     * @param string $bindingType - see SamlConstants::Binding_*
+     * @param string  $bindingType - see SamlConstants::Binding_*
+     *
      * @return \LightSaml\Model\Protocol\SamlMessage|null
      */
     private function getSamlMessage(Request $request, $bindingType)
@@ -166,6 +171,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
     /**
      * @param $request
+     *
      * @return \LightSaml\Model\Protocol\SamlMessage|null
      */
     private function getIncomingMessage($request)
@@ -173,7 +179,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
         $bindingType = $this->bindingFactory->detectBindingType($request);
 
         if (null === $bindingType) {
-            return null;
+            return;
         }
 
         return $this->getSamlMessage($request, $bindingType);

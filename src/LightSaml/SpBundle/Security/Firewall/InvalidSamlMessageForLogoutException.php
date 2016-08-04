@@ -1,12 +1,12 @@
 <?php
+
 namespace LightSaml\SpBundle\Security\Firewall;
 
 use LightSaml\Error\LightSamlException;
 use LightSaml\Model\Protocol\SamlMessage;
 
 /**
- * Class InvalidSamlMessageForLogoutException
- * @package LightSaml\SpBundle\Security\Firewall
+ * Class InvalidSamlMessageForLogoutException.
  */
 class InvalidSamlMessageForLogoutException extends LightSamlException
 {
