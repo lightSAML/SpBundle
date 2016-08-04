@@ -44,7 +44,7 @@ class SimpleUsernameMapper implements UsernameMapperInterface
             }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -73,6 +73,6 @@ class SimpleUsernameMapper implements UsernameMapperInterface
             }
         }
 
-        return null;
+        return;
     }
 }

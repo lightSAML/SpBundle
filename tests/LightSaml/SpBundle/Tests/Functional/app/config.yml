@@ -25,6 +25,11 @@ security:
     firewalls:
         dummy:
             provider: dummy
+            logout:
+                path: lightsaml_sp.logout
+                target: default
+                invalidate_session: false
+                success_handler: security.firewall.logout_handler.lightsaml_sp
             anonymous: ~
 
 light_saml_symfony_bridge:

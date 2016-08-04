@@ -13,6 +13,9 @@ lightsaml_sp.login:
 lightsaml_sp.login_check:
     path: /login_check
 
+lightsaml_sp.logout:
+    path: /logout
+
 lightsaml_sp.sessions:
     path: /sessions
     defaults: { _controller: LightSamlSpBundle:Default:sessions }

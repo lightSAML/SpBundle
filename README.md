@@ -11,6 +11,27 @@ LightSAML SP Bundle
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/LightSamlPhp)
 
 
-SAML 2.0 SP Symfony bundle based on LightSAML.
+## SAML 2.0 SP Symfony bundle based on LightSAML.
 
 [Getting Started](http://www.lightsaml.com/SP-Bundle/Getting-started/)
+
+## Logout
+
+To enable single logout, add following entry to _security.yml_:
+
+```
+security:
+    ...
+
+    firewalls:
+        main:
+            light_saml_sp:
+                ...
+            logout:
+                path: lightsaml_sp.logout
+                target: default
+                invalidate_session: false
+                success_handler: security.firewall.logout_handler.lightsaml_sp
+```
+
+That's all. Now you can logout using path _/saml/logout_.
