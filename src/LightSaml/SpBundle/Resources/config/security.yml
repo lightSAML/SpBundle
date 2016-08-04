@@ -18,3 +18,11 @@ services:
             - ~ # attribute mapper
             - ~ # token factory
         abstract: true
+
+    security.firewall.logout_handler.lightsaml_sp:
+        class: LightSaml\SpBundle\Security\Firewall\LightSamlLogoutHandler
+        arguments:
+            - "@lightsaml.service.binding_factory"
+            - "@lightsaml.store.sso_state"
+            - "@router"
+            - "@lightsaml_sp.slo.message_factory"

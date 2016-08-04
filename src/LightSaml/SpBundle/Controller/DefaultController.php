@@ -42,9 +42,15 @@ class DefaultController extends Controller
 
     public function loginAction(Request $request)
     {
+        $user = $this->getUser();
+
+        if (null !== $user) {
+            return $this->redirectToRoute('homepage');
+        }
+
         $idpEntityId = $request->get('idp');
         if (null === $idpEntityId) {
-            return $this->redirectToRoute($this->container->getParameter('lightsaml_sp.route.discovery'));
+            return $this->redirectToRoute($this->getParameter('lightsaml_sp.route.discovery'));
         }
 
         $profile = $this->get('ligthsaml.profile.login_factory')->get($idpEntityId);

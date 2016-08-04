@@ -52,7 +52,7 @@ class FunctionalTest extends WebTestCase
     public function test_login()
     {
         $client = static::createClient();
-        $client->getContainer()->set('session', $sessionMock = $this->getMock(SessionInterface::class));
+        $client->getContainer()->set('session', $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock());
 
         $crawler = $client->request('GET', '/saml/login?idp=https://localhost/lightSAML/lightSAML-IDP');
 
@@ -97,5 +97,37 @@ class FunctionalTest extends WebTestCase
         $this->assertEquals('idp2', $crawlerSessions->last()->filter('li[data-idp]')->attr('data-idp'));
         $this->assertEquals('sp2', $crawlerSessions->last()->filter('li[data-sp]')->attr('data-sp'));
 
+    }
+
+    public function test_logout()
+    {
+        $ssoState = new SsoState();
+        $ssoState->addSsoSession(
+            (new SsoSessionState())
+                ->setIdpEntityId('idp1')
+                ->setSpEntityId('sp1')
+                ->setNameId('nameId')
+                ->setNameIdFormat('nameIdFormat')
+        );
+
+        $ssoStateStoreMock = $this->getMockBuilder(SsoStateStoreInterface::class)->getMock();
+        $ssoStateStoreMock->method('get')
+            ->willReturn($ssoState);
+
+        $client = static::createClient();
+        $client->getContainer()->set('lightsaml.store.sso_state', $ssoStateStoreMock);
+        $client->getContainer()->set('session', $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock());
+
+        $client->request('GET', '/saml/logout');
+
+        $logoutRequestUrl = $client->getResponse()->headers->get('location');
+        $samlRequestParam = explode('&', parse_url($logoutRequestUrl, PHP_URL_QUERY))[0];
+        $samlRequest = gzinflate(base64_decode(urldecode(explode('=', $samlRequestParam)[1])));
+
+        $root = new \SimpleXMLElement($samlRequest);
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals('LogoutRequest', $root->getName());
+        $this->assertEquals('https://openidp.feide.no/simplesaml/saml2/idp/SingleLogoutService.php', $root['Destination']);
     }
 }

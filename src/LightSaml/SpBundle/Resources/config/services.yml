@@ -10,3 +10,9 @@ services:
 
     lightsaml_sp.token_factory:
         class: LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactory
+
+    lightsaml_sp.slo.message_factory:
+        class: LightSaml\SpBundle\Model\Protocol\LogoutMessageContextFactory
+        arguments:
+            - "%lightsaml.own.entity_id%"
+            - "@lightsaml.party.idp_entity_descriptor_store"
