@@ -4,7 +4,6 @@ php:
     - 5.5
     - 5.6
     - 7.0
-    - hhvm
 
 cache:
     directories:
@@ -31,4 +30,4 @@ script:
     - bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-    - php bin/coveralls -v
+    - if [[ "$TRAVIS_PHP_VERSION" == "7.0" ]]; then php bin/coveralls -v; fi;
