@@ -119,6 +119,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         }
 
         if ($this->userChecker && $user instanceof UserInterface) {
+            $this->userChecker->checkPreAuth($user);
             $this->userChecker->checkPostAuth($user);
         }
 
