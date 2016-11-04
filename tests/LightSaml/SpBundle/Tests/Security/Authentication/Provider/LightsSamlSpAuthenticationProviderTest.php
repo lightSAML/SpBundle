@@ -285,6 +285,10 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($user);
 
         $userCheckerMock->expects($this->once())
+            ->method('checkPreAuth')
+            ->with($user);
+
+        $userCheckerMock->expects($this->once())
             ->method('checkPostAuth')
             ->with($user);
 
