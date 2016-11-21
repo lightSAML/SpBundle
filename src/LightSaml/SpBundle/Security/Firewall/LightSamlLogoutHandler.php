@@ -91,7 +91,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
         $sessions = $this->ssoStateStore->get()->getSsoSessions();
 
         if (count($sessions) === 0) {
-            return $this->createRedirectToHomepage();
+            return $this->createLogoutResponse();
         }
 
         /* @var $session SsoSessionState */
@@ -133,7 +133,7 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
 
         $this->invalidateSession();
 
-        return $this->createRedirectToHomepage();
+        return $this->createLogoutResponse();
     }
 
     /**
@@ -171,9 +171,9 @@ class LightSamlLogoutHandler implements LogoutSuccessHandlerInterface
     }
 
     /**
-     * @return RedirectResponse
+     * @return Response
      */
-    private function createRedirectToHomepage()
+    protected function createLogoutResponse()
     {
         return new RedirectResponse($this->router->generate('homepage'));
     }
