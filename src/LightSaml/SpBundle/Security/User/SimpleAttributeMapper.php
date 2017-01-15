@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the LightSAML SP-Bundle package.
+ *
+ * (c) Milos Tomic <tmilos@lightsaml.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace LightSaml\SpBundle\Security\User;
 
 use LightSaml\Model\Assertion\Assertion;
@@ -23,7 +32,7 @@ class SimpleAttributeMapper implements AttributeMapperInterface
     }
 
     /**
-     * @param array $attributes
+     * @param array     $attributes
      * @param Assertion $assertion
      *
      * @return array
@@ -36,7 +45,7 @@ class SimpleAttributeMapper implements AttributeMapperInterface
     }
 
     /**
-     * @param array $attributes
+     * @param array              $attributes
      * @param AttributeStatement $attributeStatement
      *
      * @return array
@@ -49,7 +58,7 @@ class SimpleAttributeMapper implements AttributeMapperInterface
     }
 
     /**
-     * @param array $attributes
+     * @param array     $attributes
      * @param Attribute $attribute
      *
      * @return array
