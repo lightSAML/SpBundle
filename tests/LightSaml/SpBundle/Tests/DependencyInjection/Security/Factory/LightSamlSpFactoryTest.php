@@ -34,7 +34,7 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
             ['force', BooleanNode::class, false],
             ['username_mapper', ScalarNode::class, 'lightsaml_sp.username_mapper.simple'],
             ['user_creator', ScalarNode::class, null],
-            ['attribute_mapper', ScalarNode::class, null],
+            ['attribute_mapper', ScalarNode::class, 'lightsaml_sp.attribute_mapper.simple'],
             ['token_factory', ScalarNode::class, 'lightsaml_sp.token_factory'],
         ];
     }

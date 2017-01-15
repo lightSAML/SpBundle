@@ -8,5 +8,8 @@ services:
         arguments:
             - []
 
+    lightsaml_sp.attribute_mapper.simple:
+            class: LightSaml\SpBundle\Security\User\SimpleAttributeMapper
+
     lightsaml_sp.token_factory:
         class: LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactory
