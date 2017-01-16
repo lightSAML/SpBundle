@@ -20,7 +20,7 @@ before_install:
     - echo "session.gc_probability = 0" >> $INI_FILE
     - composer self-update
     - composer --version
-    - wget http://get.sensiolabs.org/php-cs-fixer.phar -O php-cs-fixer.phar
+    - wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v1.12.3/php-cs-fixer.phar -O php-cs-fixer.phar
 
 install:
     - COMPOSER_ROOT_VERSION=dev-master composer update --prefer-source $COMPOSER_FLAGS
