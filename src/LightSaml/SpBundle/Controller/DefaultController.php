@@ -32,7 +32,7 @@ class DefaultController extends Controller
         $parties = $this->get('lightsaml.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
         if (count($parties) == 1) {
-            return $this->redirectToRoute('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]);
+            return $this->redirect($this->generateUrl('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]));
         }
 
         return $this->render('LightSamlSpBundle::discovery.html.twig', [
@@ -44,7 +44,7 @@ class DefaultController extends Controller
     {
         $idpEntityId = $request->get('idp');
         if (null === $idpEntityId) {
-            return $this->redirectToRoute($this->container->getParameter('lightsaml_sp.route.discovery'));
+            return $this->redirect($this->generateUrl($this->container->getParameter('lightsaml_sp.route.discovery')));
         }
 
         $profile = $this->get('ligthsaml.profile.login_factory')->get($idpEntityId);
