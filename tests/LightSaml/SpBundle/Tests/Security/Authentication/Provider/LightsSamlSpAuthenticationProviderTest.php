@@ -427,7 +427,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function test_throws_authentication_exception_when_unable_to_resolve_user()
     {
-        $provider = new LightsSamlSpAuthenticationProvider('main', null, true);
+        $provider = new LightsSamlSpAuthenticationProvider('main', null, false);
         $provider->authenticate(new SamlSpResponseToken(new Response(), 'main'));
     }
 

@@ -201,15 +201,19 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
     /**
      * @param SamlSpResponseToken $token
      *
-     * @return null|string
+     * @return string
      */
     private function createDefaultUser(SamlSpResponseToken $token)
     {
-        if (null === $this->usernameMapper) {
-            return null;
+        $result = null;
+        if ($this->usernameMapper) {
+            $result = $this->usernameMapper->getUsername($token->getResponse());
+        }
+        if (!$result) {
+            $result = 'Anon.';
         }
 
-        return $this->usernameMapper->getUsername($token->getResponse());
+        return $result;
     }
 
     /**

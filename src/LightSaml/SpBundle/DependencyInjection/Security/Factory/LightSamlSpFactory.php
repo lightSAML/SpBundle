@@ -24,7 +24,7 @@ class LightSamlSpFactory extends AbstractFactory
         parent::addConfiguration($node);
         $node
             ->children()
-                ->booleanNode('force')->defaultFalse()->end()
+                ->booleanNode('force')->defaultTrue()->end()
                 ->scalarNode('username_mapper')->defaultValue('lightsaml_sp.username_mapper.simple')->end()
                 ->scalarNode('user_creator')->defaultNull()->end()
                 ->scalarNode('attribute_mapper')->defaultValue('lightsaml_sp.attribute_mapper.simple')->end()
