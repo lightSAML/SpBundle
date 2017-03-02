@@ -11,8 +11,6 @@
 
 namespace LightSaml\SpBundle\Security\Authentication\Provider;
 
-use LightSaml\ClaimTypes;
-use LightSaml\SamlConstants;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpToken;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactoryInterface;
@@ -207,36 +205,11 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     private function createDefaultUser(SamlSpResponseToken $token)
     {
-        if ($token->getResponse()->getFirstAssertion() &&
-            $token->getResponse()->getFirstAssertion()->getSubject() &&
-            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID() &&
-            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getFormat() != SamlConstants::NAME_ID_FORMAT_TRANSIENT &&
-            $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue()
-        ) {
-            return $token->getResponse()->getFirstAssertion()->getSubject()->getNameID()->getValue();
+        if (null === $this->usernameMapper) {
+            return null;
         }
 
-        if ($token->getResponse()->getFirstAssertion() &&
-            $attributeStatement = $token->getResponse()->getFirstAssertion()->getFirstAttributeStatement()
-        ) {
-            $names = [
-                ClaimTypes::COMMON_NAME,
-                ClaimTypes::EMAIL_ADDRESS,
-                ClaimTypes::WINDOWS_ACCOUNT_NAME,
-                ClaimTypes::ADFS_1_EMAIL,
-                ClaimTypes::UPN,
-                ClaimTypes::ADFS_1_UPN,
-            ];
-
-            foreach ($names as $name) {
-                $attribute = $attributeStatement->getFirstAttributeByName($name);
-                if ($attribute && $attribute->getFirstAttributeValue()) {
-                    return $attribute->getFirstAttributeValue();
-                }
-            }
-        }
-
-        return null;
+        return $this->usernameMapper->getUsername($token->getResponse());
     }
 
     /**

@@ -189,6 +189,10 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $usernameMapperMock->expects($this->exactly(2))
+            ->method('getUsername')
+            ->willReturn($nameIdValue);
+
         $authenticatedToken = $provider->authenticate($token);
 
         $this->assertTrue($authenticatedToken->isAuthenticated());
@@ -225,6 +229,10 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
                 ->addAttribute(new Attribute(ClaimTypes::EMAIL_ADDRESS, $email = 'email@domain.com'))
             )
         );
+
+        $usernameMapperMock->expects($this->exactly(2))
+            ->method('getUsername')
+            ->willReturn($email);
 
         $authenticatedToken = $provider->authenticate($token);
 
