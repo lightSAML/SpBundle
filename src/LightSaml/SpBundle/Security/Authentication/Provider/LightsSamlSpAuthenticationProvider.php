@@ -92,12 +92,17 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     public function authenticate(TokenInterface $token)
     {
-        if (false === $this->supports($token)) {
-            throw new \LogicException('Unsupported token');
+        if ($token instanceof SamlSpResponseToken) {
+            return $this->authenticateResponse($token);
+        } elseif ($token instanceof SamlSpToken) {
+            return $this->reauthenticate($token);
         }
 
-        /* @var SamlSpResponseToken $token */
+        throw new \LogicException(sprintf('Unsupported token %s', get_class($token)));
+    }
 
+    private function authenticateResponse(SamlSpResponseToken $token)
+    {
         $user = null;
         try {
             $user = $this->loadUser($token);
@@ -142,6 +147,19 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
         return $result;
     }
 
+    private function reauthenticate(SamlSpToken $token)
+    {
+        $user = $token->getUser();
+        $result = new SamlSpToken(
+            $user instanceof UserInterface ? $user->getRoles() : $token->getRoles(),
+            $this->providerKey,
+            $token->getAttributes(),
+            $user
+        );
+
+        return $result;
+    }
+
     /**
      * Checks whether this provider supports the given token.
      *
@@ -151,7 +169,7 @@ class LightsSamlSpAuthenticationProvider implements AuthenticationProviderInterf
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof SamlSpResponseToken;
+        return $token instanceof SamlSpToken;
     }
 
     /**

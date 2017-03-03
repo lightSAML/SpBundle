@@ -47,10 +47,34 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($provider->supports(new SamlSpResponseToken(new Response(), $providerKey)));
     }
 
-    public function test_does_not_support_non_saml_sp_response_token()
+    public function test_supports_saml_sp_token()
     {
         $provider = new LightsSamlSpAuthenticationProvider($providerKey = 'main');
-        $this->assertFalse($provider->supports($this->getMock(TokenInterface::class)));
+        $this->assertTrue($provider->supports(new SamlSpToken([], $providerKey, [], 'user')));
+    }
+
+    public function test_supports_reauthentication()
+    {
+        $provider = new LightsSamlSpAuthenticationProvider(
+            $providerKey = 'main',
+            $userProviderMock = $this->getUserProviderMock(),
+            false,
+            null,
+            $usernameMapperMock = $this->getUsernameMapperMock()
+        );
+
+        $user = 'some.user';
+        $roles = ['ROLE_USER'];
+        $attributes = ['a' =>1, 'b' => 'bbb'];
+        $inToken = new SamlSpToken($roles, $providerKey, $attributes, $user);
+
+        /** @var SamlSpToken $outToken */
+        $outToken = $provider->authenticate($inToken);
+        $this->assertInstanceOf(SamlSpToken::class, $outToken);
+        $this->assertEquals($user, $outToken->getUser());
+        $this->assertEquals($roles, array_map(function ($r) { return $r->getRole(); }, $outToken->getRoles()));
+        $this->assertEquals($providerKey, $outToken->getProviderKey());
+        $this->assertEquals($attributes, $outToken->getAttributes());
     }
 
     public function test_creates_authenticated_token_with_user_and_his_roles()
