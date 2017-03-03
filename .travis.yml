@@ -1,17 +1,17 @@
 language: php
 
 php:
-    - 5.5
     - 5.6
     - 7.0
+    - 7.1
 
 cache:
     directories:
-        - $HOME/.composer/cache/files
+        - $HOME/.composer/cache
 
 matrix:
     include:
-        - php: 5.5
+        - php: 5.6
           env: COMPOSER_FLAGS="--prefer-lowest"
 
 before_install:
@@ -20,14 +20,15 @@ before_install:
     - echo "session.gc_probability = 0" >> $INI_FILE
     - composer self-update
     - composer --version
-    - wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v1.12.3/php-cs-fixer.phar -O php-cs-fixer.phar
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then wget http://get.sensiolabs.org/php-cs-fixer.phar -O php-cs-fixer.phar; fi
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then php php-cs-fixer.phar --version; fi
 
 install:
     - COMPOSER_ROOT_VERSION=dev-master composer update --prefer-source $COMPOSER_FLAGS
 
 script:
-    - php php-cs-fixer.phar fix --dry-run -v
-    - bin/phpunit --coverage-clover build/logs/clover.xml
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then php php-cs-fixer.phar fix --dry-run -v; fi
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then bin/phpunit --coverage-clover build/logs/clover.xml; else bin/phpunit; fi
 
 after_script:
-    - if [[ "$TRAVIS_PHP_VERSION" == "7.0" ]]; then php bin/coveralls -v; fi;
+    - if [[ "$TRAVIS_PHP_VERSION" == "7.1" ]]; then php bin/coveralls -v; fi;
