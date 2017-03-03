@@ -31,7 +31,7 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
     public function configuration_provider()
     {
         return [
-            ['force', BooleanNode::class, false],
+            ['force', BooleanNode::class, true],
             ['username_mapper', ScalarNode::class, 'lightsaml_sp.username_mapper.simple'],
             ['user_creator', ScalarNode::class, null],
             ['attribute_mapper', ScalarNode::class, 'lightsaml_sp.attribute_mapper.simple'],
@@ -177,7 +177,7 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
     private function getDefaultConfig()
     {
         return [
-            'force' => false,
+            'force' => true,
             'username_mapper' => 'lightsaml_sp.username_mapper.simple',
             'token_factory' => 'lightsaml_sp.token_factory',
             'user_creator' => 'some.user.creator',
