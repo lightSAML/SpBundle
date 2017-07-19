@@ -58,7 +58,8 @@ class LogoutMessageContextFactory
 
         $logoutRequest->setSessionIndex($sessionState->getSessionIndex());
         $logoutRequest->setNameID(new NameID(
-            $sessionState->getNameId(), $sessionState->getNameIdFormat()
+            $sessionState->getNameId(),
+            $sessionState->getNameIdFormat()
         ));
         $logoutRequest->setDestination($this->getSingleLogoutServiceLocation());
 

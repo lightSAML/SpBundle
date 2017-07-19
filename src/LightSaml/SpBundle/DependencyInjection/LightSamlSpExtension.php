@@ -11,6 +11,7 @@
 
 namespace LightSaml\SpBundle\DependencyInjection;
 
+use LightSaml\SpBundle\Security\Authentication\EntityId\EntityIdProviderInterface as Provider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -38,11 +39,22 @@ class LightSamlSpExtension extends Extension
         $loader->load('services.yml');
 
         $this->configureSimpleUsernameMapper($config, $container);
+        $this->configureEntityIdProvider($config, $container);
     }
 
     private function configureSimpleUsernameMapper(array $config, ContainerBuilder $container)
     {
         $definition = $container->getDefinition('lightsaml_sp.username_mapper.simple');
         $definition->replaceArgument(0, $config['username_mapper']);
+    }
+
+    private function configureEntityIdProvider(array $config, ContainerBuilder $container)
+    {
+        if (isset($config[Provider::PROVIDER_NAME])) {
+            $container->setParameter(
+                sprintf('%s.%s', Configuration::CONFIGURATION_NAME, Provider::PROVIDER_NAME),
+                $config[Provider::PROVIDER_NAME]
+            );
+        }
     }
 }

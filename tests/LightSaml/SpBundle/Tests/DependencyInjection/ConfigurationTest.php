@@ -27,6 +27,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->processConfiguration($config);
     }
 
+    public function test_allow_set_entity_id_resolver_scalar()
+    {
+        $config = [
+            'light_saml_sp' => [
+                'entity_id_provider' => 'entity_id_provider_name'
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
     public function test_sets_default_username_mapper()
     {
         $config = ['light_saml_sp' => []];
