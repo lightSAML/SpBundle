@@ -15,6 +15,15 @@ LightSAML SP Bundle
 
 [Getting Started](http://www.lightsaml.com/SP-Bundle/Getting-started/)
 
+## Custom EntityId provider
+
+To enable custom EntityId provider you have to write an implementation of `EntityIdProviderInterface`, next define it as service and configure it in `config.yml` with:
+```
+light_saml_sp:
+    ...
+    entity_id_provider: custom_entity_id_provider
+    ...
+```
 ## Logout
 
 To enable single logout, add following entry to _security.yml_:

@@ -22,6 +22,7 @@
         "php": ">=5.5.1",
         "symfony/framework-bundle": "~2.3|~3.0",
         "symfony/security-bundle": "~2.3|~3.0",
+        "symfony/expression-language": "~2.3|~3.0",
         "lightsaml/symfony-bridge": "~1.0"
     },
     "require-dev": {

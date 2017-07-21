@@ -15,9 +15,12 @@ use LightSaml\ClaimTypes;
 use LightSaml\SpBundle\Security\User\SimpleUsernameMapper;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use LightSaml\SpBundle\Security\Authentication\EntityId\EntityIdProviderInterface as Provider;
 
 class Configuration implements ConfigurationInterface
 {
+    const CONFIGURATION_NAME = 'light_saml_sp';
+
     /**
      * Generates the configuration tree builder.
      *
@@ -26,7 +29,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $root = $treeBuilder->root('light_saml_sp');
+        $root = $treeBuilder->root(self::CONFIGURATION_NAME);
 
         $root
             ->children()
@@ -43,6 +46,7 @@ class Configuration implements ConfigurationInterface
                     ])
                     ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode(Provider::PROVIDER_NAME)->end()
             ->end()
         ;
 
