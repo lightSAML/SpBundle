@@ -20,7 +20,7 @@ class SimpleUsernameMapper implements UsernameMapperInterface
     const NAME_ID = '@name_id@';
 
     /** @var string[] */
-    private $attributes;
+    protected $attributes;
 
     /**
      * @param string[] $attributes
@@ -52,7 +52,7 @@ class SimpleUsernameMapper implements UsernameMapperInterface
      *
      * @return null|string
      */
-    private function getUsernameFromAssertion(Assertion $assertion)
+    protected function getUsernameFromAssertion(Assertion $assertion)
     {
         foreach ($this->attributes as $attributeName) {
             if (self::NAME_ID == $attributeName) {
