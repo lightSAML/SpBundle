@@ -19,8 +19,23 @@
     </logging>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Project Controller Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/Controller</directory>
+        </testsuite>
+        <testsuite name="Project DI Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/DependencyInjection</directory>
+        </testsuite>
+        <testsuite name="Project Functional Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/Functional</directory>
+        </testsuite>
+        <testsuite name="Project Integration Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Project Security Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/Security</directory>
+        </testsuite>
+        <testsuite name="Project Unit Test Suite">
+            <directory>tests/LightSaml/SpBundle/Tests/Unit</directory>
         </testsuite>
     </testsuites>
 

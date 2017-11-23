@@ -20,6 +20,7 @@ use LightSaml\SpBundle\Security\Authentication\EntityId\EntityIdProviderInterfac
 class Configuration implements ConfigurationInterface
 {
     const CONFIGURATION_NAME = 'light_saml_sp';
+    const IDP_DATA_METADATA_PROVIDER = 'idp_data_metadata_provider';
 
     /**
      * Generates the configuration tree builder.
@@ -47,6 +48,21 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
                 ->scalarNode(Provider::PROVIDER_NAME)->end()
+                ->arrayNode(self::IDP_DATA_METADATA_PROVIDER)
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                        ->end()
+                        ->scalarNode('idp_data_url')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                        ->end()
+                        ->scalarNode('domain_resolver_url')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

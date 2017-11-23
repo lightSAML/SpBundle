@@ -1,0 +1,5 @@
+imports:
+    - { resource: ../../Functional/app/config.yml }
+
+parameters:
+    light_saml_sp.idp_data_metadata_provider.enabled: true

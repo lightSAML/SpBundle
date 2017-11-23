@@ -7,8 +7,9 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-namespace LightSaml\SpBundle\Tests\Functional;
+namespace LightSaml\SpBundle\Tests\IdpData;
 
+use LightSaml\SpBundle\Infrastructure\IdpData\Api;
 use LightSaml\SpBundle\Tests\Integration\ContainerAwareTestCase;
 use LightSaml\State\Sso\SsoSessionState;
 use LightSaml\State\Sso\SsoState;
@@ -19,7 +20,7 @@ class FunctionalTest extends ContainerAwareTestCase
 {
     const OWN_ENTITY_ID = 'https://localhost/lightSAML/SPBundle';
 
-    public function testMetadata()
+    public function test_metadata()
     {
         $this->client->request('GET', '/saml/metadata.xml');
 
@@ -35,34 +36,37 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals(1, $root->SPSSODescriptor->AssertionConsumerService->count());
     }
 
-    public function testDiscovery()
+    public function test_discovery()
     {
         $crawler = $this->client->request('GET', '/saml/discovery');
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $idpCrawler = $crawler->filter('body a');
+        $this->assertEquals(1, $idpCrawler->count());
 
-        $idpCrawler = $crawler->filter('a[data-idp]');
-        $this->assertEquals(3, $idpCrawler->count());
-        $arr = [];
-        foreach ($idpCrawler as $idp) {
-            $arr[$idp->getAttribute('data-idp')] = 1;
-        }
-        $this->assertArrayHasKey('https://openidp.feide.no', $arr);
-        $this->assertArrayHasKey('https://localhost/lightSAML/lightSAML-IDP', $arr);
-        $this->assertArrayHasKey('https://idp.testshib.org/idp/shibboleth', $arr);
+        $this->assertEquals('/saml/login?idp=https%3A//openidp.feide.no', $idpCrawler->html());
     }
 
-    public function testLogin()
+    public function test_login()
     {
-        $this->client->getContainer()->set('session', $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock());
-
+        $this->client->getContainer()->set(
+            'session',
+            $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock()
+        );
+        $this->client->getContainer()->set(
+            'lightsaml_sp.idp_data_api',
+            $this->client->getContainer()->get('lightsaml_sp.fake_idp_data_api')
+        );
         $crawler = $this->client->request('GET', '/saml/login?idp=https://localhost/lightSAML/lightSAML-IDP');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $crawlerForm = $crawler->filter('form');
         $this->assertEquals(1, $crawlerForm->count());
-        $this->assertEquals('https://localhost/lightsaml/lightSAML-IDP/web/idp/login.php', $crawlerForm->first()->attr('action'));
+        $this->assertEquals(
+            'https://localhost/lightsaml/lightSAML-IDP/web/idp/login.php',
+            $crawlerForm->first()->attr('action')
+        );
 
         $crawlerSamlRequest = $crawler->filter('input[name="SAMLRequest"]');
         $this->assertEquals(1, $crawlerSamlRequest->count());
@@ -76,7 +80,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals(self::OWN_ENTITY_ID, (string) $root->children('saml', true)->Issuer);
     }
 
-    public function testSessions()
+    public function test_sessions()
     {
         $ssoState = new SsoState();
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp1')->setSpEntityId('sp1'));
@@ -99,7 +103,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals('sp2', $crawlerSessions->last()->filter('li[data-sp]')->attr('data-sp'));
     }
 
-    public function testLogout()
+    public function test_logout()
     {
         $ssoState = new SsoState();
         $ssoState->addSsoSession(
@@ -115,7 +119,10 @@ class FunctionalTest extends ContainerAwareTestCase
             ->willReturn($ssoState);
 
         $this->client->getContainer()->set('lightsaml.store.sso_state', $ssoStateStoreMock);
-        $this->client->getContainer()->set('session', $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock());
+        $this->client->getContainer()->set(
+            'session',
+            $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock()
+        );
 
         $this->client->request('GET', '/saml/logout');
 
@@ -127,6 +134,9 @@ class FunctionalTest extends ContainerAwareTestCase
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
         $this->assertEquals('LogoutRequest', $root->getName());
-        $this->assertEquals('https://openidp.feide.no/simplesaml/saml2/idp/SingleLogoutService.php', $root['Destination']);
+        $this->assertEquals(
+            'https://openidp.feide.no/simplesaml/saml2/idp/SingleLogoutService.php',
+            $root['Destination']
+        );
     }
 }

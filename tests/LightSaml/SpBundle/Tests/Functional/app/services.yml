@@ -1,0 +1,9 @@
+services:
+    lightsaml_sp.idp_data_api:
+        class: LightSaml\SpBundle\Infrastructure\IdpData\OpenIdpFakeApi
+
+    lightsaml_sp.domain_resolver_api:
+        class: LightSaml\SpBundle\Infrastructure\DomainResolver\FakeApi
+
+    lightsaml_sp.fake_idp_data_api:
+        class: LightSaml\SpBundle\Infrastructure\IdpData\LocalhostFakeApi

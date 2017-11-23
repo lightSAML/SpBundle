@@ -12,6 +12,7 @@
 namespace LightSaml\SpBundle;
 
 use LightSaml\SpBundle\DependencyInjection\Compiler\InjectEntityIdProviderCompilerPass;
+use LightSaml\SpBundle\DependencyInjection\Compiler\InjectIdpDataMetadataProviderCompilerPass;
 use LightSaml\SpBundle\DependencyInjection\Security\Factory\LightSamlSpFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -23,6 +24,7 @@ class LightSamlSpBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new InjectEntityIdProviderCompilerPass());
+        $container->addCompilerPass(new InjectIdpDataMetadataProviderCompilerPass());
 
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new LightSamlSpFactory());

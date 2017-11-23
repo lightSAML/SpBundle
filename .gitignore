@@ -12,3 +12,5 @@ vendor/*
 /*.cache
 /tests/LightSaml/SpBundle/Tests/Functional/app/cache/*
 /tests/LightSaml/SpBundle/Tests/Functional/app/logs/*
+/tests/LightSaml/SpBundle/Tests/IdpData/app/cache/*
+/tests/LightSaml/SpBundle/Tests/IdpData/app/logs/*

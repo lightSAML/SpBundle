@@ -5,17 +5,19 @@ namespace LightSaml\SpBundle\Tests\DependencyInjection;
 use LightSaml\ClaimTypes;
 use LightSaml\SpBundle\DependencyInjection\Configuration;
 use LightSaml\SpBundle\Security\User\SimpleUsernameMapper;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_allow_empty_configuration()
+    public function testAllowEmptyConfiguration()
     {
         $emptyConfig = array();
         $this->processConfiguration($emptyConfig);
     }
 
-    public function test_allow_set_username_mapper_scalar_array()
+    public function testAllowSetUsernameMapperScalarArray()
     {
         $config = [
             'light_saml_sp' => [
@@ -27,7 +29,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->processConfiguration($config);
     }
 
-    public function test_allow_set_entity_id_resolver_scalar()
+    public function testAllowSetEntityIdResolverScalar()
     {
         $config = [
             'light_saml_sp' => [
@@ -37,7 +39,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->processConfiguration($config);
     }
 
-    public function test_sets_default_username_mapper()
+    public function testSetsDefaultUsernameMapper()
     {
         $config = ['light_saml_sp' => []];
         $processedConfig = $this->processConfiguration($config);
@@ -56,6 +58,106 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ],
             $processedConfig['username_mapper']
         );
+    }
+
+    public function testAllowToConfigureIdpDataMetadataProvider()
+    {
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => true,
+                    'idp_data_url' => 'idp-data',
+                    'domain_resolver_url' => 'domain-resolver'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testItThrowsExceptionIfIdpDataUrlIsNotDefined()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => true,
+                    'domain_resolver_url' => 'domain-resolver'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testItThrowsExceptionIfDomainResolverUrlIsNotDefined()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => true,
+                    'idp_data_url' => 'idp-data'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testItThrowsExceptionIfIdpDataUrlIsEmpty()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => true,
+                    'idp_data_url' => '',
+                    'domain_resolver_url' => 'domain-resolver'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testItThrowsExceptionIfDomainResolverUrlIsEmpty()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => true,
+                    'idp_data_url' => 'idp-data',
+                    'domain_resolver_url' => ''
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testEnablingIdpDataMetadataProviderIsOptional()
+    {
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'idp_data_url' => 'idp-data',
+                    'domain_resolver_url' => 'domain-resolver'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
+    }
+
+    public function testEnablingIdpDataMetadataProviderMustBeBoolean()
+    {
+        $this->expectException(InvalidTypeException::class);
+        $config = [
+            'light_saml_sp' => [
+                'idp_data_metadata_provider' => [
+                    'enabled' => 1,
+                    'idp_data_url' => 'idp-data',
+                    'domain_resolver_url' => 'domain-resolver'
+                ]
+            ],
+        ];
+        $this->processConfiguration($config);
     }
 
     /**

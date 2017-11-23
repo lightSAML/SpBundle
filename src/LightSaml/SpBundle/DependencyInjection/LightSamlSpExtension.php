@@ -40,6 +40,7 @@ class LightSamlSpExtension extends Extension
 
         $this->configureSimpleUsernameMapper($config, $container);
         $this->configureEntityIdProvider($config, $container);
+        $this->configureIdpDataMetadataProvider($config, $container);
     }
 
     private function configureSimpleUsernameMapper(array $config, ContainerBuilder $container)
@@ -55,6 +56,24 @@ class LightSamlSpExtension extends Extension
                 sprintf('%s.%s', Configuration::CONFIGURATION_NAME, Provider::PROVIDER_NAME),
                 $config[Provider::PROVIDER_NAME]
             );
+        }
+    }
+
+    private function configureIdpDataMetadataProvider(array $config, ContainerBuilder $container)
+    {
+        if (isset($config[Configuration::IDP_DATA_METADATA_PROVIDER])) {
+            $params = ['enabled', 'idp_data_url', 'domain_resolver_url'];
+            foreach ($params as $param) {
+                $container->setParameter(
+                    sprintf(
+                        '%s.%s.%s',
+                        Configuration::CONFIGURATION_NAME,
+                        Configuration::IDP_DATA_METADATA_PROVIDER,
+                        $param
+                    ),
+                    $config[Configuration::IDP_DATA_METADATA_PROVIDER][$param]
+                );
+            }
         }
     }
 }

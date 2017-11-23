@@ -24,6 +24,22 @@ light_saml_sp:
     entity_id_provider: custom_entity_id_provider
     ...
 ```
+
+## Using IDPData Metadata provider
+
+To enable IDPData Metadata provider you have to add to `config.yml` what follows:
+```
+light_saml_sp:
+    ...
+    idp_data_metadata_provider:
+        enabled: true
+        idp_data_url: http://idp-data
+        domain_resolver_url: http://domain-resolver
+    ...
+```
+
+If you omit configuration above (or set `enabled: false`) then default metadata provider will be used.
+
 ## Logout
 
 To enable single logout, add following entry to _security.yml_:

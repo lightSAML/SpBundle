@@ -16,3 +16,35 @@ services:
         arguments:
             - "%lightsaml.own.entity_id%"
             - "@lightsaml.party.idp_entity_descriptor_store"
+
+    http_client:
+        class: Http\Adapter\Guzzle6\Client
+
+    lightsaml_sp.idp_data_api.http:
+        class: LightSaml\SpBundle\Infrastructure\IdpData\HttpApi
+        arguments:
+            - "@http_client"
+            - "%light_saml_sp.idp_data_metadata_provider.idp_data_url%"
+
+    lightsaml_sp.idp_data_api: "@lightsaml_sp.idp_data_api.http"
+
+    lightsaml_sp.domain_resolver_api.http:
+        class: LightSaml\SpBundle\Infrastructure\DomainResolver\HttpApi
+        arguments:
+            - "@http_client"
+            - "@request_stack"
+            - "%light_saml_sp.idp_data_metadata_provider.domain_resolver_url%"
+
+    lightsaml_sp.domain_resolver_api: "@lightsaml_sp.domain_resolver_api.http"
+
+    lightsaml_sp.idpdata_metadata_provider:
+        class: LightSaml\SpBundle\Metadata\IdpDataMetadataProvider
+        arguments:
+            - "@lightsaml_sp.idp_data_api"
+            - "@lightsaml_sp.domain_resolver_api"
+            - "@logger"
+
+    lightsaml.party.idp_entity_descriptor_store.idp_data:
+        class: LightSaml\SpBundle\Store\EntityDescriptor\IdpDataEntityDescriptorStore
+        arguments:
+            - "@lightsaml_sp.idpdata_metadata_provider"

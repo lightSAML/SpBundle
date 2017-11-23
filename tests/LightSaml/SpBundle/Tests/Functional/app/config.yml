@@ -1,3 +1,6 @@
+imports:
+    - { resource: services.yml }
+
 framework:
     secret:          secret
     test:            ~
@@ -52,3 +55,8 @@ light_saml_symfony_bridge:
 services:
     id_store:
         class: LightSaml\Store\Id\IdArrayStore
+
+parameters:
+    light_saml_sp.idp_data_metadata_provider.enabled: false
+    light_saml_sp.idp_data_metadata_provider.idp_data_url: http://localhost:9092
+    light_saml_sp.idp_data_metadata_provider.domain_resolver_url: http://localhost:9092
