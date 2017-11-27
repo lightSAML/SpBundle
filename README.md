@@ -60,3 +60,15 @@ security:
 ```
 
 That's all. Now you can logout using path _/saml/logout_.
+
+### Change-log
+
+* __1.4.0_:
+    - PPCDEV-6208 Retrieve cert and private key from IdpData
+    - PPCDEV-6154 use IdpData service for retrievieng metadata
+* __1.3.0_:
+    - Dynamic entity id
+* __1.2.0_:
+    - Generalized logout response
+* __1.1.0_:
+    - Added support for Single Logout
