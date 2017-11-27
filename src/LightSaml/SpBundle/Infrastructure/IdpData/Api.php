@@ -12,4 +12,8 @@ namespace LightSaml\SpBundle\Infrastructure\IdpData;
 interface Api
 {
     public function getMetadata($organisation);
+
+    public function getCertificate($organisation);
+
+    public function getPrivateKey($organisation);
 }

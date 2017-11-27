@@ -17,4 +17,14 @@ class HttpApi extends RestApi implements Api
     {
         return $this->sendRequest('GET', sprintf('organisation/%s/metadata', $organisation))->getBody()->getContents();
     }
+
+    public function getCertificate($organisation)
+    {
+        return $this->sendRequest('GET', sprintf('organisation/%s/certificate', $organisation))->getBody()->getContents();
+    }
+
+    public function getPrivateKey($organisation)
+    {
+        return $this->sendRequest('GET', sprintf('organisation/%s/key', $organisation))->getBody()->getContents();
+    }
 }

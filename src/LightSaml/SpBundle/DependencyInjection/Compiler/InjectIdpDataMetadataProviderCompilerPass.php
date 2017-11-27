@@ -9,6 +9,7 @@
  */
 namespace LightSaml\SpBundle\DependencyInjection\Compiler;
 
+use LightSaml\SpBundle\Store\Credential\CompositeCredentialStore;
 use LightSaml\SpBundle\Store\EntityDescriptor\CompositeEntityDescriptorStore;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -16,16 +17,22 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class InjectIdpDataMetadataProviderCompilerPass implements CompilerPassInterface
 {
-    const METADATA_PROVIDER_SWITCHH = 'light_saml_sp.idp_data_metadata_provider.enabled';
+    const METADATA_PROVIDER_SWITCH = 'light_saml_sp.idp_data_metadata_provider.enabled';
 
     public function process(ContainerBuilder $container)
     {
         if ($this->isIdpDataMetadataProviderEnabled($container)) {
-            $serviceDefinition = $container->getDefinition('lightsaml.party.idp_entity_descriptor_store');
-            $serviceDefinition->setClass(CompositeEntityDescriptorStore::class);
-            $serviceDefinition->addMethodCall('removeAll');
-            $serviceDefinition
+            $injectEntityDescriptor = $container->getDefinition('lightsaml.party.idp_entity_descriptor_store');
+            $injectEntityDescriptor->setClass(CompositeEntityDescriptorStore::class);
+            $injectEntityDescriptor->addMethodCall('removeAll');
+            $injectEntityDescriptor
                 ->addMethodCall('add', [new Reference('lightsaml.party.idp_entity_descriptor_store.idp_data')]);
+
+            $injectCredentialStore = $container->getDefinition('lightsaml.own.credential_store');
+            $injectCredentialStore->setClass(CompositeCredentialStore::class);
+            $injectCredentialStore->addMethodCall('removeAll');
+            $injectCredentialStore
+                ->addMethodCall('add', [new Reference('lightsaml.lightsaml.own_credential_store.idp_data')]);
         }
     }
 
@@ -36,7 +43,7 @@ class InjectIdpDataMetadataProviderCompilerPass implements CompilerPassInterface
     private function isIdpDataMetadataProviderEnabled(ContainerBuilder $container)
     {
         return
-            $container->hasParameter(self::METADATA_PROVIDER_SWITCHH) &&
-            $container->getParameter(self::METADATA_PROVIDER_SWITCHH);
+            $container->hasParameter(self::METADATA_PROVIDER_SWITCH) &&
+            $container->getParameter(self::METADATA_PROVIDER_SWITCH);
     }
 }

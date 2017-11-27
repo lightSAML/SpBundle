@@ -11,6 +11,7 @@ namespace LightSaml\SpBundle\Tests\DependencyInjection\Compiler;
 
 use LightSaml\SpBundle\DependencyInjection\Compiler\InjectIdpDataMetadataProviderCompilerPass;
 use LightSaml\SpBundle\DependencyInjection\Configuration;
+use LightSaml\SpBundle\Store\Credential\CompositeCredentialStore;
 use LightSaml\SpBundle\Store\EntityDescriptor\CompositeEntityDescriptorStore;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -37,6 +38,10 @@ class InjectIdpDataMetadataProviderCompilerPassTest extends \PHPUnit_Framework_T
         $container->setDefinition(
             'lightsaml.party.idp_entity_descriptor_store',
             new Definition(CompositeEntityDescriptorStore::class)
+        );
+        $container->setDefinition(
+            'lightsaml.own.credential_store',
+            new Definition(CompositeCredentialStore::class)
         );
 
         foreach ($config as $parameter => $value) {

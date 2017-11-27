@@ -50,14 +50,14 @@ class HttpApiTest extends ContainerAwareTestCase
     /** @test */
     public function itGetsOrganisation()
     {
-        $responseBody = ['organisation' => 'default'];
+        $responseBody = ['domain' => 'localhost', 'organisation' => 'default'];
         $this->apiResponds(200, $responseBody);
 
         $response = $this->httpApi->getOrganisation();
 
         $this->thenRequestUrlEquals('http://localhost:9092/domain/piwikpro.dev');
         $this->thenRequestMethodEquals('GET');
-        $this->thenResponseBodyEquals($response, $responseBody);
+        $this->thenResponseBodyEquals($response, $responseBody['organisation']);
     }
 
     /** @param string $expectedUrl */

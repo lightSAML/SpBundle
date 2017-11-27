@@ -59,6 +59,36 @@ class HttpApiTest extends ContainerAwareTestCase
         $this->thenResponseBodyEquals($response, $responseBody);
     }
 
+    /** @test */
+    public function itGetsCertificate()
+    {
+        $responseBody = 'some certificate :)';
+        $this->apiResponds(200, $responseBody);
+
+        $response = $this->httpApi->getCertificate('default');
+
+        $this->thenRequestUrlEquals(
+            'http://localhost:9092/organisation/default/certificate'
+        );
+        $this->thenRequestMethodEquals('GET');
+        $this->thenResponseBodyEquals($response, $responseBody);
+    }
+
+    /** @test */
+    public function itGetsPrivateKey()
+    {
+        $responseBody = 'some private key :)';
+        $this->apiResponds(200, $responseBody);
+
+        $response = $this->httpApi->getPrivateKey('default');
+
+        $this->thenRequestUrlEquals(
+            'http://localhost:9092/organisation/default/key'
+        );
+        $this->thenRequestMethodEquals('GET');
+        $this->thenResponseBodyEquals($response, $responseBody);
+    }
+
     /** @param string $expectedUrl */
     private function thenRequestUrlEquals($expectedUrl)
     {

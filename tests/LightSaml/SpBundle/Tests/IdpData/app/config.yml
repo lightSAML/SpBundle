@@ -3,3 +3,7 @@ imports:
 
 parameters:
     light_saml_sp.idp_data_metadata_provider.enabled: true
+
+light_saml_symfony_bridge:
+    own:
+        entity_id: https://localhost/lightSAML/SPBundle

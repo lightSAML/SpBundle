@@ -48,3 +48,10 @@ services:
         class: LightSaml\SpBundle\Store\EntityDescriptor\IdpDataEntityDescriptorStore
         arguments:
             - "@lightsaml_sp.idpdata_metadata_provider"
+
+    lightsaml.lightsaml.own_credential_store.idp_data:
+        class: LightSaml\SpBundle\Store\Credential\IdpDataCredentialStore
+        arguments:
+            - "@lightsaml_sp.idp_data_api"
+            - "@lightsaml_sp.domain_resolver_api"
+            - "@logger"

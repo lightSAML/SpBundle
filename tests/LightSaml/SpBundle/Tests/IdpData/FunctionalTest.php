@@ -9,7 +9,6 @@
  */
 namespace LightSaml\SpBundle\Tests\IdpData;
 
-use LightSaml\SpBundle\Infrastructure\IdpData\Api;
 use LightSaml\SpBundle\Tests\Integration\ContainerAwareTestCase;
 use LightSaml\State\Sso\SsoSessionState;
 use LightSaml\State\Sso\SsoState;
@@ -20,7 +19,7 @@ class FunctionalTest extends ContainerAwareTestCase
 {
     const OWN_ENTITY_ID = 'https://localhost/lightSAML/SPBundle';
 
-    public function test_metadata()
+    public function testMetadata()
     {
         $this->client->request('GET', '/saml/metadata.xml');
 
@@ -36,7 +35,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals(1, $root->SPSSODescriptor->AssertionConsumerService->count());
     }
 
-    public function test_discovery()
+    public function testDiscovery()
     {
         $crawler = $this->client->request('GET', '/saml/discovery');
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
@@ -47,7 +46,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals('/saml/login?idp=https%3A//openidp.feide.no', $idpCrawler->html());
     }
 
-    public function test_login()
+    public function testLogin()
     {
         $this->client->getContainer()->set(
             'session',
@@ -80,7 +79,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals(self::OWN_ENTITY_ID, (string) $root->children('saml', true)->Issuer);
     }
 
-    public function test_sessions()
+    public function testSessions()
     {
         $ssoState = new SsoState();
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp1')->setSpEntityId('sp1'));
@@ -103,7 +102,7 @@ class FunctionalTest extends ContainerAwareTestCase
         $this->assertEquals('sp2', $crawlerSessions->last()->filter('li[data-sp]')->attr('data-sp'));
     }
 
-    public function test_logout()
+    public function testLogout()
     {
         $ssoState = new SsoState();
         $ssoState->addSsoSession(

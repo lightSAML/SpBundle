@@ -28,6 +28,8 @@ class HttpApi extends RestApi implements Api
     {
         $response = $this->sendRequest('GET', sprintf('domain/%s', $this->domain));
 
-        return json_decode($response->getBody()->getContents(), true);
+        $organisationResponse = json_decode($response->getBody()->getContents(), true);
+
+        return $organisationResponse['organisation'];
     }
 }
