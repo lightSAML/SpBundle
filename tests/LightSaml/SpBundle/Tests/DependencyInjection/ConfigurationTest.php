@@ -65,7 +65,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'enabled' => true,
+                    'enabled' => 1,
                     'idp_data_url' => 'idp-data',
                     'domain_resolver_url' => 'domain-resolver'
                 ]
@@ -80,7 +80,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'enabled' => true,
+                    'enabled' => 1,
                     'domain_resolver_url' => 'domain-resolver'
                 ]
             ],
@@ -94,7 +94,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'enabled' => true,
+                    'enabled' => 1,
                     'idp_data_url' => 'idp-data'
                 ]
             ],
@@ -108,7 +108,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'enabled' => true,
+                    'enabled' => 1,
                     'idp_data_url' => '',
                     'domain_resolver_url' => 'domain-resolver'
                 ]
@@ -123,7 +123,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'enabled' => true,
+                    'enabled' => 1,
                     'idp_data_url' => 'idp-data',
                     'domain_resolver_url' => ''
                 ]
@@ -137,21 +137,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = [
             'light_saml_sp' => [
                 'idp_data_metadata_provider' => [
-                    'idp_data_url' => 'idp-data',
-                    'domain_resolver_url' => 'domain-resolver'
-                ]
-            ],
-        ];
-        $this->processConfiguration($config);
-    }
-
-    public function testEnablingIdpDataMetadataProviderMustBeBoolean()
-    {
-        $this->expectException(InvalidTypeException::class);
-        $config = [
-            'light_saml_sp' => [
-                'idp_data_metadata_provider' => [
-                    'enabled' => 1,
                     'idp_data_url' => 'idp-data',
                     'domain_resolver_url' => 'domain-resolver'
                 ]
