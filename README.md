@@ -63,6 +63,8 @@ That's all. Now you can logout using path _/saml/logout_.
 
 ### Change-log
 
+* __1.5.0_:
+    - PPCDEV-6430 Sign LogoutRequests for SingleSignOn feature
 * __1.4.1_:
     - PPCDEV-6258 Allow to enable IdpData with int value
 * __1.4.0_:
