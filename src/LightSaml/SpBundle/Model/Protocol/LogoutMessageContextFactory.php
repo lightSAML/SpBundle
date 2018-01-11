@@ -12,6 +12,7 @@
 namespace LightSaml\SpBundle\Model\Protocol;
 
 use LightSaml\Context\Profile\MessageContext;
+use LightSaml\Credential\X509CredentialInterface;
 use LightSaml\Model\Assertion\Issuer;
 use LightSaml\Model\Assertion\NameID;
 use LightSaml\Model\Protocol\LogoutRequest;
@@ -20,9 +21,12 @@ use LightSaml\Helper as LightSamlHelper;
 use LightSaml\Model\Protocol\SamlMessage;
 use LightSaml\Model\Protocol\Status;
 use LightSaml\Model\Protocol\StatusCode;
+use LightSaml\Model\XmlDSig\Signature;
 use LightSaml\SamlConstants;
 use LightSaml\State\Sso\SsoSessionState;
+use LightSaml\Store\Credential\CredentialStoreInterface;
 use LightSaml\Store\EntityDescriptor\EntityDescriptorStoreInterface;
+use LightSaml\Model\XmlDSig\SignatureWriter;
 
 /**
  * Class LogoutMessageFactory.
@@ -33,17 +37,24 @@ class LogoutMessageContextFactory
     private $spEntityId;
     /** @var EntityDescriptorStoreInterface */
     private $entityDescriptorStore;
+    /** @var CredentialStoreInterface */
+    private $ownCredentialStore;
 
     /**
      * LogoutMessageFactory constructor.
      *
-     * @param string                         $spEntityId
+     * @param string $spEntityId
      * @param EntityDescriptorStoreInterface $entityDescriptorStore
+     * @param CredentialStoreInterface $ownCredentialStore
      */
-    public function __construct($spEntityId, EntityDescriptorStoreInterface $entityDescriptorStore)
-    {
+    public function __construct(
+        $spEntityId,
+        EntityDescriptorStoreInterface $entityDescriptorStore,
+        CredentialStoreInterface $ownCredentialStore
+    ) {
         $this->spEntityId = $spEntityId;
         $this->entityDescriptorStore = $entityDescriptorStore;
+        $this->ownCredentialStore = $ownCredentialStore;
     }
 
     /**
@@ -94,7 +105,8 @@ class LogoutMessageContextFactory
         $samlMessage
             ->setID(LightSamlHelper::generateID())
             ->setIssueInstant(new \DateTime())
-            ->setIssuer(new Issuer($this->spEntityId));
+            ->setIssuer(new Issuer($this->spEntityId))
+            ->setSignature($this->getSignature());
     }
 
     /**
@@ -133,5 +145,15 @@ class LogoutMessageContextFactory
         $context->setBindingType($this->getSingleLogoutServiceBindingType());
 
         return $context;
+    }
+
+    /**
+     * @return Signature
+     */
+    private function getSignature()
+    {
+        /** @var X509CredentialInterface[] $ownCredential */
+        $ownCredential = $this->ownCredentialStore->getByEntityId($this->spEntityId);
+        return new SignatureWriter($ownCredential[0]->getCertificate(), $ownCredential[0]->getPrivateKey());
     }
 }

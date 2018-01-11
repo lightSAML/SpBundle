@@ -16,6 +16,7 @@ services:
         arguments:
             - "%lightsaml.own.entity_id%"
             - "@lightsaml.party.idp_entity_descriptor_store"
+            - "@lightsaml.own.credential_store"
 
     http_client:
         class: Http\Adapter\Guzzle6\Client
