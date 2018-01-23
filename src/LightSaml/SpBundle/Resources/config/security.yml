@@ -5,6 +5,7 @@ services:
         abstract: true
         calls:
             - [setProfile, ["@ligthsaml.profile.acs"]]
+            - [setBindingFactory, ["@lightsaml.service.binding_factory"]]
 
     security.authentication.provider.lightsaml_sp:
         class: LightSaml\SpBundle\Security\Authentication\Provider\LightsSamlSpAuthenticationProvider

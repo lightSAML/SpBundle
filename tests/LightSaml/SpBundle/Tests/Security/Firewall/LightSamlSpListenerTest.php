@@ -48,6 +48,20 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
             ->method('buildAction')
             ->willReturn($actionMock);
 
+        $redirectBindingMock = $this->getHttpRedirectBindingMock();
+
+        $bindingFactoryMock = $this->getBindingFactoryMock();
+        $bindingFactoryMock->expects($this->once())
+            ->method('detectBindingType')
+            ->willReturn(\LightSaml\SamlConstants::BINDING_SAML2_HTTP_REDIRECT);
+        $bindingFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($redirectBindingMock);
+        $redirectBindingMock->expects($this->once())
+            ->method('receive');
+
+        $listener->setBindingFactory($bindingFactoryMock);
+
         $samlResponse = new Response();
 
         $contextMock->expects($this->any())
@@ -118,6 +132,22 @@ class LightSamlSpListenerTest extends \PHPUnit_Framework_TestCase
     private function getProfileBuilderMock()
     {
         return $this->getMock(\LightSaml\Builder\Profile\ProfileBuilderInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\LightSaml\Binding\BindingFactory
+     */
+    private function getBindingFactoryMock()
+    {
+        return $this->getMock(\LightSaml\Binding\BindingFactory::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\LightSaml\Binding\HttpRedirectBinding
+     */
+    private function getHttpRedirectBindingMock()
+    {
+        return $this->getMock(\LightSaml\Binding\HttpRedirectBinding::class);
     }
 
     /**
