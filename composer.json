@@ -20,14 +20,14 @@
     },
     "require": {
         "php": ">=5.5.1",
-        "symfony/framework-bundle": "~2.3|~3.0",
-        "symfony/security-bundle": "~2.3|~3.0",
+        "symfony/framework-bundle": "~2.3|~3.0|~4.0",
+        "symfony/security-bundle": "~2.3|~3.0|~4.0",
         "lightsaml/symfony-bridge": "~1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.6",
-        "symfony/symfony": "~2.3|~3.0",
-        "symfony/monolog-bundle": "~2.3|~3.0",
+        "phpunit/phpunit": "~4.6|~5.3",
+        "symfony/symfony": "~2.3|~3.0|~4.0",
+        "symfony/monolog-bundle": "~2.3|~3.0|~4.0",
         "satooshi/php-coveralls": "~0.6"
     },
     "config": {

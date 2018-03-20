@@ -13,6 +13,7 @@ namespace LightSaml\SpBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
@@ -46,9 +47,17 @@ class LightSamlSpFactory extends AbstractFactory
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
+        if (class_exists('Symfony\Component\DependencyInjection\ChildDefinition')) {
+            // Symfony >= 3.3
+            $definition = new ChildDefinition('security.authentication.provider.lightsaml_sp');
+        } else {
+            // Symfony < 3.3
+            $definition = new DefinitionDecorator('security.authentication.provider.lightsaml_sp');
+        }
+
         $providerId = 'security.authentication.provider.lightsaml_sp.'.$id;
         $provider = $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.lightsaml_sp'))
+            ->setDefinition($providerId, $definition)
             ->replaceArgument(0, $id)
             ->replaceArgument(2, $config['force'])
         ;
@@ -111,8 +120,16 @@ class LightSamlSpFactory extends AbstractFactory
     {
         $entryPointId = 'security.authentication.form_entry_point.'.$id;
 
+        if (class_exists('Symfony\Component\DependencyInjection\ChildDefinition')) {
+            // Symfony >= 3.3
+            $definition = new ChildDefinition('security.authentication.form_entry_point');
+        } else {
+            // Symfony < 3.3
+            $definition = new DefinitionDecorator('security.authentication.form_entry_point');
+        }
+
         $container
-            ->setDefinition($entryPointId, new DefinitionDecorator('security.authentication.form_entry_point'))
+            ->setDefinition($entryPointId, $definition)
             ->addArgument(new Reference('security.http_utils'))
             ->addArgument($config['login_path'])
             ->addArgument($config['use_forward'])
