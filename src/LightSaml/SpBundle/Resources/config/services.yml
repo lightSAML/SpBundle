@@ -7,9 +7,12 @@ services:
         class: LightSaml\SpBundle\Security\User\SimpleUsernameMapper
         arguments:
             - []
+        public: true
 
     lightsaml_sp.attribute_mapper.simple:
-            class: LightSaml\SpBundle\Security\User\SimpleAttributeMapper
+        class: LightSaml\SpBundle\Security\User\SimpleAttributeMapper
+        public: true
 
     lightsaml_sp.token_factory:
         class: LightSaml\SpBundle\Security\Authentication\Token\SamlSpTokenFactory
+        public: true
