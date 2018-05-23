@@ -45,7 +45,7 @@ class DefaultControllerTest extends \PHPUnit_Framework_TestCase
      */
     private function getContainerMock()
     {
-        return $this->getMock(\Symfony\Component\DependencyInjection\ContainerInterface::class);
+        return $this->getMockBuilder(\Symfony\Component\DependencyInjection\ContainerInterface::class)->getMock();
     }
 
     /**
@@ -53,7 +53,7 @@ class DefaultControllerTest extends \PHPUnit_Framework_TestCase
      */
     private function getProfileBuilderMock()
     {
-        return $this->getMock(\LightSaml\Builder\Profile\ProfileBuilderInterface::class);
+        return $this->getMockBuilder(\LightSaml\Builder\Profile\ProfileBuilderInterface::class)->getMock();
     }
 
     /**
@@ -71,7 +71,7 @@ class DefaultControllerTest extends \PHPUnit_Framework_TestCase
      */
     private function getActionMock()
     {
-        return $this->getMock(\LightSaml\Action\ActionInterface::class);
+        return $this->getMockBuilder(\LightSaml\Action\ActionInterface::class)->getMock();
     }
 
     /**
@@ -79,6 +79,6 @@ class DefaultControllerTest extends \PHPUnit_Framework_TestCase
      */
     private function getHttpResponseContextMock()
     {
-        return $this->getMock(\LightSaml\Context\Profile\HttpResponseContext::class);
+        return $this->getMockBuilder(\LightSaml\Context\Profile\HttpResponseContext::class)->getMock();
     }
 }

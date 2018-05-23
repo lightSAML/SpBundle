@@ -365,7 +365,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function test_throws_logic_exception_on_unsupported_token()
     {
         $provider = new LightsSamlSpAuthenticationProvider('main');
-        $provider->authenticate($this->getMock(TokenInterface::class));
+        $provider->authenticate($this->getMockBuilder(TokenInterface::class)->getMock());
     }
 
     /**
@@ -460,7 +460,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getUserCheckerMock()
     {
-        return $this->getMock('Symfony\Component\Security\Core\User\UserCheckerInterface');
+        return $this->getMockBuilder(\Symfony\Component\Security\Core\User\UserCheckerInterface::class)->getMock();
     }
 
     /**
@@ -468,7 +468,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getUserMock()
     {
-        return $this->getMock('Symfony\Component\Security\Core\User\UserInterface');
+        return $this->getMockBuilder(\Symfony\Component\Security\Core\User\UserInterface::class)->getMock();
     }
 
     /**
@@ -476,7 +476,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getUserProviderMock()
     {
-        return $this->getMock('Symfony\Component\Security\Core\User\UserProviderInterface');
+        return $this->getMockBuilder(\Symfony\Component\Security\Core\User\UserProviderInterface::class)->getMock();
     }
 
     /**
@@ -484,7 +484,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getUsernameMapperMock()
     {
-        return $this->getMock(UsernameMapperInterface::class);
+        return $this->getMockBuilder(UsernameMapperInterface::class)->getMock();
     }
 
     /**
@@ -492,7 +492,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getUserCreatorMock()
     {
-        return $this->getMock(UserCreatorInterface::class);
+        return $this->getMockBuilder(UserCreatorInterface::class)->getMock();
     }
 
     /**
@@ -500,7 +500,7 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getAttributeMapperMock()
     {
-        return $this->getMock(AttributeMapperInterface::class);
+        return $this->getMockBuilder(AttributeMapperInterface::class)->getMock();
     }
 
     /**
@@ -508,6 +508,6 @@ class LightsSamlSpAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function getTokenFactoryMock()
     {
-        return $this->getMock(SamlSpTokenFactoryInterface::class);
+        return $this->getMockBuilder(SamlSpTokenFactoryInterface::class)->getMock();
     }
 }

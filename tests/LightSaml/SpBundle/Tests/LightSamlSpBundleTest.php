@@ -28,7 +28,7 @@ class LightSamlSpBundleTest extends \PHPUnit_Framework_TestCase
      */
     private function getContainerBuilderMock()
     {
-        return $this->getMock(\Symfony\Component\DependencyInjection\ContainerBuilder::class);
+        return $this->getMockBuilder(\Symfony\Component\DependencyInjection\ContainerBuilder::class)->getMock();
     }
 
     /**
@@ -36,6 +36,6 @@ class LightSamlSpBundleTest extends \PHPUnit_Framework_TestCase
      */
     private function getExtensionMock()
     {
-        return $this->getMock(\Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension::class);
+        return $this->getMockBuilder(\Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension::class)->getMock();
     }
 }

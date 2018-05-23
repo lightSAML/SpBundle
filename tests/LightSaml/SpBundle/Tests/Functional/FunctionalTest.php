@@ -1,16 +1,28 @@
 <?php
 
-namespace LightSaml\SpBundle\Tests\Controller;
+namespace LightSaml\SpBundle\Tests\Functional;
 
 use LightSaml\State\Sso\SsoSessionState;
 use LightSaml\State\Sso\SsoState;
 use LightSaml\Store\Sso\SsoStateStoreInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FunctionalTest extends WebTestCase
 {
     const OWN_ENTITY_ID = 'https://localhost/lightSAML/SPBundle';
+
+    protected function setUp()
+    {
+        parent::setUp();
+        require_once __DIR__.'/app/AppKernel.php';
+        $_SERVER['KERNEL_CLASS'] = \AppKernel::class;
+        $_SERVER['KERNEL_DIR'] = __DIR__.'/app';
+        $fs = new Filesystem();
+        $fs->remove(__DIR__.'/app/cache');
+    }
+
 
     public function test_metadata()
     {
@@ -52,7 +64,7 @@ class FunctionalTest extends WebTestCase
     public function test_login()
     {
         $client = static::createClient();
-        $client->getContainer()->set('session', $sessionMock = $this->getMock(SessionInterface::class));
+        $client->getContainer()->set('session', $sessionMock = $this->getMockBuilder(SessionInterface::class)->getMock());
 
         $crawler = $client->request('GET', '/saml/login?idp=https://localhost/lightSAML/lightSAML-IDP');
 
@@ -80,7 +92,7 @@ class FunctionalTest extends WebTestCase
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp1')->setSpEntityId('sp1'));
         $ssoState->addSsoSession((new SsoSessionState())->setIdpEntityId('idp2')->setSpEntityId('sp2'));
 
-        $ssoStateStoreMock = $this->getMock(SsoStateStoreInterface::class);
+        $ssoStateStoreMock = $this->getMockBuilder(SsoStateStoreInterface::class)->getMock();
         $ssoStateStoreMock->method('get')
             ->willReturn($ssoState);
 
