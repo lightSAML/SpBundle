@@ -31,7 +31,7 @@ class DefaultController extends Controller
     {
         $parties = $this->get('lightsaml.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
-        if (count($parties) == 1) {
+        if (1 == count($parties)) {
             return $this->redirect($this->generateUrl('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]));
         }
 

@@ -68,7 +68,7 @@ class SimpleAttributeMapper implements AttributeMapperInterface
         $key = $attribute->getName();
         $value = $attribute->getAllAttributeValues();
 
-        if (!array_key_exists($key, $attributes) && count($value) === 1) {
+        if (!array_key_exists($key, $attributes) && 1 === count($value)) {
             $value = array_shift($value);
         }
 
