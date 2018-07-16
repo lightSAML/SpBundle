@@ -35,7 +35,7 @@ class DefaultController extends Controller
             return $this->redirect($this->generateUrl('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]));
         }
 
-        return $this->render('LightSamlSpBundle::discovery.html.twig', [
+        return $this->render('@LightSamlSp/discovery.html.twig', [
             'parties' => $parties,
         ]);
     }
@@ -60,7 +60,7 @@ class DefaultController extends Controller
     {
         $ssoState = $this->get('lightsaml.container.build')->getStoreContainer()->getSsoStateStore()->get();
 
-        return $this->render('LightSamlSpBundle::sessions.html.twig', [
+        return $this->render('@LightSamlSp/sessions.html.twig', [
             'sessions' => $ssoState->getSsoSessions(),
         ]);
     }
