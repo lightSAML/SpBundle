@@ -27,30 +27,41 @@ class DefaultController extends Controller
         return $context->getHttpResponseContext()->getResponse();
     }
 
-    public function discoveryAction()
+    public function discoveryAction(Request $request)
     {
+        $params = array();
+        $relayState = $request->get('RelayState');
+        if (null !== $relayState) {
+            $params['RelayState'] = $relayState;
+        }
+
         $parties = $this->get('lightsaml.container.build')->getPartyContainer()->getIdpEntityDescriptorStore()->all();
 
         if (1 == count($parties)) {
-            return $this->redirect($this->generateUrl('lightsaml_sp.login', ['idp' => $parties[0]->getEntityID()]));
+            return $this->redirect($this->generateUrl('lightsaml_sp.login', array_merge($params, ['idp' => $parties[0]->getEntityID()])));
         }
 
         return $this->render('LightSamlSpBundle::discovery.html.twig', [
             'parties' => $parties,
+            'params' => $params
         ]);
     }
 
     public function loginAction(Request $request)
     {
+        $relayState = $request->get('RelayState');
         $idpEntityId = $request->get('idp');
         if (null === $idpEntityId) {
-            return $this->redirect($this->generateUrl($this->container->getParameter('lightsaml_sp.route.discovery')));
+            $params = array();
+            if (null !== $relayState) {
+                $params['RelayState'] = $relayState;
+            }
+            return $this->redirect($this->generateUrl($this->container->getParameter('lightsaml_sp.route.discovery'), $params));
         }
 
         $profile = $this->get('ligthsaml.profile.login_factory')->get($idpEntityId);
         $context = $profile->buildContext();
 
-        $relayState = $request->get('RelayState');
         if (null !== $relayState) {
             $context->setRelayState($relayState);
         }
