@@ -49,6 +49,12 @@ class DefaultController extends Controller
 
         $profile = $this->get('ligthsaml.profile.login_factory')->get($idpEntityId);
         $context = $profile->buildContext();
+
+        $relayState = $request->get('RelayState');
+        if (null !== $relayState) {
+            $context->setRelayState($relayState);
+        }
+
         $action = $profile->buildAction();
 
         $action->execute($context);
