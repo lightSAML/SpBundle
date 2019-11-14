@@ -11,8 +11,13 @@
 
 namespace LightSaml\SpBundle\Security\Firewall;
 
+use LightSaml\Binding\AbstractBinding;
+use LightSaml\Binding\BindingFactory;
 use LightSaml\Builder\Profile\ProfileBuilderInterface;
+use LightSaml\Context\Profile\MessageContext;
+use LightSaml\Model\Protocol\LogoutResponse;
 use LightSaml\Model\Protocol\Response;
+use LightSaml\SamlConstants;
 use LightSaml\SpBundle\Security\Authentication\Token\SamlSpResponseToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -24,6 +29,9 @@ class LightSamlSpListener extends AbstractAuthenticationListener
     /** @var ProfileBuilderInterface */
     private $profile;
 
+    /** @var BindingFactory */
+    private $bindingFactory;
+
     /**
      * @param ProfileBuilderInterface $profile
      *
@@ -32,6 +40,18 @@ class LightSamlSpListener extends AbstractAuthenticationListener
     public function setProfile(ProfileBuilderInterface $profile)
     {
         $this->profile = $profile;
+
+        return $this;
+    }
+
+    /**
+     * @param BindingFactory $bindingFactory
+     *
+     * @return LightSamlSpListener
+     */
+    public function setBindingFactory(BindingFactory $bindingFactory)
+    {
+        $this->bindingFactory = $bindingFactory;
 
         return $this;
     }
@@ -47,6 +67,29 @@ class LightSamlSpListener extends AbstractAuthenticationListener
      */
     protected function attemptAuthentication(Request $request)
     {
+        $bindingType = $this->bindingFactory->detectBindingType($request);
+
+        if (null === $bindingType) {
+            throw new \LogicException('No SAML response.');
+        }
+
+        $binding = $this->bindingFactory->create($bindingType);
+        $messageContext = new MessageContext();
+        /* @var $binding AbstractBinding */
+        $binding->receive($request, $messageContext);
+        $samlRequest = $messageContext->getMessage();
+
+        if ($samlRequest instanceof LogoutResponse) {
+            $status = $samlRequest->getStatus();
+            $code = $status->getStatusCode() ? $status->getStatusCode()->getValue() : null;
+
+            if (SamlConstants::STATUS_PARTIAL_LOGOUT === $code || SamlConstants::STATUS_SUCCESS === $code) {
+                $request->getSession()->invalidate();
+            }
+
+            throw new AuthenticationException('This is a logout response');
+        }
+
         $samlResponse = $this->receiveSamlResponse();
 
         $token = new SamlSpResponseToken($samlResponse, $this->providerKey);
