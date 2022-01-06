@@ -8,6 +8,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ScalarNode;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpKernel\Kernel;
 
 class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,9 +46,18 @@ class LightSamlSpFactoryTest extends \PHPUnit_Framework_TestCase
     public function test_configuration($configurationName, $type, $defaultValue)
     {
         $factory = new LightSamlSpFactory();
-        $treeBuilder = new TreeBuilder();
-        $factory->addConfiguration($treeBuilder->root('name'));
-        $children = $treeBuilder->buildTree()->getChildren();
+        
+		if (Kernel::VERSION_ID >= 40200) {
+            $treeBuilder = new TreeBuilder('name');
+            $root = $treeBuilder->getRootNode();
+        } else {
+            $treeBuilder = new TreeBuilder();
+            $root = $treeBuilder->root('name');
+        }
+		
+		$factory->addConfiguration($root);
+		
+		$children = $treeBuilder->buildTree()->getChildren();
         $this->assertArrayHasKey($configurationName, $children);
         $this->assertInstanceOf($type, $children['force']);
 

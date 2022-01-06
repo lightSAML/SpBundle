@@ -15,6 +15,7 @@ use LightSaml\ClaimTypes;
 use LightSaml\SpBundle\Security\User\SimpleUsernameMapper;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class Configuration implements ConfigurationInterface
 {
@@ -25,8 +26,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $root = $treeBuilder->root('light_saml_sp');
+        if (Kernel::VERSION_ID >= 40200) {
+            $treeBuilder = new TreeBuilder('light_saml_sp');
+            $root = $treeBuilder->getRootNode();
+        } else {
+            $treeBuilder = new TreeBuilder();
+            $root = $treeBuilder->root('light_saml_sp');
+        }
 
         $root
             ->children()
