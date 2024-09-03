@@ -45,20 +45,13 @@ class LightSamlSpFactory extends AbstractFactory
      *
      * @return string never null, the id of the authentication provider
      */
-    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string|array
     {
-        if (class_exists('Symfony\Component\DependencyInjection\ChildDefinition')) {
-            // Symfony >= 3.3
-            $definition = new ChildDefinition('security.authentication.provider.lightsaml_sp');
-        } else {
-            // Symfony < 3.3
-            $definition = new DefinitionDecorator('security.authentication.provider.lightsaml_sp');
-        }
-
-        $providerId = 'security.authentication.provider.lightsaml_sp.'.$id;
+        $definition = new ChildDefinition('security.authentication.provider.lightsaml_sp');
+        $providerId = 'security.authentication.provider.lightsaml_sp.'.$firewallName;
         $provider = $container
             ->setDefinition($providerId, $definition)
-            ->replaceArgument(0, $id)
+            ->replaceArgument(0, $firewallName)
             ->replaceArgument(2, $config['force'])
         ;
         if (isset($config['provider'])) {
@@ -111,7 +104,12 @@ class LightSamlSpFactory extends AbstractFactory
         return 'form';
     }
 
-    public function getKey()
+    public function getPriority(): int
+    {
+        return 0;
+    }
+
+    public function getKey(): string
     {
         return 'light_saml_sp';
     }
